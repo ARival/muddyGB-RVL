@@ -1,0 +1,109 @@
+<html lang="en">
+<head>
+<title>Overview - Boueux v0.1</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Boueux v0.1">
+<meta name="generator" content="makeinfo 4.13">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="index.html#Top" title="Top">
+<link rel="next" href="Sample-output.html#Sample-output" title="Sample output">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<a name="Overview"></a>
+<p>
+Next:&nbsp;<a rel="next" accesskey="n" href="Sample-output.html#Sample-output">Sample output</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="index.html#Top">Top</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<h2 class="chapter">1 Overview</h2>
+
+<p><a name="index-greetings-1"></a><a name="index-overview-2"></a>
+The GNU <samp><span class="command">hello</span></samp> program
+(<a href="http://www.gnu.org/software/hello/">http://www.gnu.org/software/hello/</a>) produces a familiar,
+friendly greeting.  It allows nonprogrammers to use a classic computer
+science tool which would otherwise be unavailable to them.  Because it
+is protected by the GNU General Public License, users are free (in
+perpetuity) to share and change it.
+
+   <div class="block-image"><img src="img/input-dpad.png" alt="img/input-dpad.png"></div>
+
+   <p><a name="index-joke_002c-not-3"></a>Not to spoil the joke, but of course the practical purpose of GNU
+Hello is to serve as a minimal example of a GNU package.  So, although
+most manuals don't need to discuss the implementation of the programs
+they document, that is part of the goal here.
+
+   <p><a name="index-GNU-coding-standards-4"></a><a name="index-GNU-maintainer-standards-5"></a><a name="index-standards_002c-GNU-coding-6"></a><a name="index-standards_002c-GNU-maintainer-7"></a>First, GNU Hello follows the GNU coding standards
+(see <a href="../standards/index.html#Top">Preface</a>) and GNU
+maintainer standards (see <a href="../maintain/index.html#Top">Preface</a>).  These are the basic documents which all GNU
+packages should adhere to.
+
+   <p>The Hello package also implements recommended development practices
+not embodied in the standards, using other GNU packages and features:
+
+     <ul>
+<li><a name="index-Automake-8"></a><a name="index-Autoconf-9"></a>It uses Automake (see <a href="../automake/index.html#Top">Introduction</a>) and
+hence also Autoconf (see <a href="../autoconf/index.html#Top">Introduction</a>)
+for configuration.
+
+     <li><a name="index-Gnulib-10"></a><a name="index-g_t_0040command_007bsrclist_002dupdate_007d-script-11"></a><a name="index-g_t_0040file_007bREADME_002ddev_007d-source-file-12"></a>It uses Gnulib (see <a href="../gnulib/index.html#Top">Introduction</a>) to enhance
+portability and avoid duplication of common sources.  Both
+<code>gnulib-tool</code> and <code>srclist-update</code> are used, for purposes of
+example.  See the <samp><span class="file">README-dev</span></samp> file in the distribution.
+
+     <li><a name="index-Gettext-13"></a>GNU Gettext (see <a href="../gettext/index.html#Top">Introduction</a>) is used
+for internationalization support.  Hello's greeting has been translated
+into many languages.
+
+     <li><a name="index-g_t_002d_002dhelp-14"></a>Internally, Hello uses the GNU <code>getopt_long</code> function
+(see <a href="../libc/Getopt-Long-Options.html#Getopt-Long-Options">Getopt Long Options</a>) to parse options,
+thus supporting GNU-style long options such as <samp><span class="option">--help</span></samp>.
+
+     <li><a name="index-Help2man-15"></a>The Hello Man page is generated with GNU <code>help2man</code>
+(see <a href="../help2man/index.html#Top">Overview</a>) from the
+<samp><span class="option">--help</span></samp> output.  This relieves the maintainers from the burden
+of updating separate man documentation, yet provides a reasonable
+overview for man devotees.
+
+     <li><a name="index-Texinfo-16"></a>Finally, Texinfo (see <a href="../texinfo/index.html#Top">Introduction</a>) is the
+documentation format for this manual.  It supports output in Info,
+HTML, PDF, DVI, plain text, XML, and other formats.
+
+   </ul>
+
+   <p>GNU Hello is implemented in C.  The GNU Gettext distribution contains
+&ldquo;hello world&rdquo; examples in many other programming languages; see the
+Gettext home page at <a href="http://www.gnu.org/software/gettext/">http://www.gnu.org/software/gettext/</a>.
+
+   <p><a name="index-g_t_0040file_007bMakefile_002eam_007d-targets-17"></a>The top-level <samp><span class="file">Makefile.am</span></samp> in Hello also contains a few special
+targets for other projects to adapt as desired:
+
+     <dl>
+<dt><code>diff</code><dd>Make a diff from the previous release, assuming the current tarball is
+in the current tarball.
+
+     <br><dt><code>po-check</code><dd>Verify that all source files using <code>_()</code> are included for
+translation in <samp><span class="file">po/POTFILES.in</span></samp>, so translators will have all the
+messages.
+
+     <br><dt><code>wwwdoc</code><dd>Sample procedure for updating the manual on the GNU web site, in this
+case <a href="http://www.gnu.org/software/hello/manual/">http://www.gnu.org/software/hello/manual/</a>. 
+</dl>
+
+   </body></html>
+

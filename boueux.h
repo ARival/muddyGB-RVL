@@ -15,10 +15,12 @@
 #define OCTAVE_LEN 12
 
 #define PRESSED(KEY) (keys & J_## KEY)
-#define WAIT_KEY_UP(KEY) while (joypad() & J_## KEY) {}
+#define WAIT_KEY_UP(KEY) while (joypad () & J_## KEY) {}
+#define DPAD_KEYS (keys & 0x0F)
 
-void play_note (SCALE scale[], UBYTE pos, UBYTE octave);
 UBYTE scale_position (UBYTE keys);
+
+void play_note (UBYTE * scale, UBYTE pos, UBYTE octave);
 void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode);
 void update_duty_cycle (UBYTE duty);
 

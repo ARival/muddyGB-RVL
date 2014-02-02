@@ -93,22 +93,11 @@ main ()
    }
 }
 
-void
-play_note (SCALE scale[], UBYTE pos, UBYTE octave)
-{
-  if (blue_mode)
-    play_freq (blue_map[pos - 1]);
-  else
-    play_freq (note_frequencies[scale[pos - 1] + octave*OCTAVE_LEN]);
-}
-
 UBYTE
 scale_position (UBYTE keys)
 {
-  UBYTE dpad_keys = keys & 0x0F; // get lower nibble
-  
   // only one dpad key being pressed?
-  UBYTE nothing_else = !(dpad_keys & (dpad_keys - 1));
+  UBYTE nothing_else = !(DPAD_KEYS & (DPAD_KEYS - 1));
   
   if (PRESSED(LEFT)  && nothing_else)   return 1;
   if (PRESSED(LEFT)  && PRESSED(DOWN))  return 2;
@@ -123,6 +112,15 @@ scale_position (UBYTE keys)
   if (PRESSED(UP)    && PRESSED(LEFT))  return 8;
 
   return 0;
+}
+
+void
+play_note (UBYTE * scale, UBYTE pos, UBYTE octave)
+{
+  if (blue_mode)
+    play_freq (blue_map[pos - 1]);
+  else
+    play_freq (note_frequencies[scale[pos - 1] + octave*OCTAVE_LEN]);
 }
 
 #define BUILD(TYPE) \
