@@ -7,8 +7,6 @@
 #include "sound.h"
 #include "music.h"
 
-UBYTE scale_position (UBYTE keys);
-
 void
 main ()
 {
@@ -17,6 +15,7 @@ main ()
   UBYTE octave = 0;
   UBYTE mode = 0;
   UBYTE root = C;
+  UBYTE duty = 0;
   SCALE scale[8];
 
   printf ("Boueux v%s\n", BOUEUX_VERSION);
@@ -46,6 +45,12 @@ main ()
          WAIT_KEY_UP (RIGHT);
          build_scale_mode (scale, root, mode);
         }
+       if (PRESSED (LEFT))
+        {
+         duty = (duty + 1) % 2;
+         WAIT_KEY_UP (LEFT);
+         update_duty_cycle (duty);
+       }
        if (PRESSED (UP))
         {
          root = (root + 1) % OCTAVE_LEN;
@@ -106,4 +111,43 @@ scale_position (UBYTE keys)
   if (PRESSED(UP)    && PRESSED(LEFT))  return 8;
 
   return 0;
+}
+
+#define BUILD(TYPE) \
+  printf ("\n; %s %s\n", note_names[tonic], #TYPE); \
+  build_scale (scale, tonic, TYPE); \
+  break;
+
+void
+build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
+{
+  switch (mode)
+   {
+    case 0: BUILD (ionian);
+    case 1: BUILD (aeolian);
+    case 2: BUILD (harmonic);
+    case 3: BUILD (blues);
+    case 4: BUILD (dorian);
+    case 5: BUILD (lydian);
+   }
+}
+
+void
+update_duty_cycle (UBYTE duty)
+{
+  switch (duty)
+   {
+    case 0:
+     puts ("\n; pulse width 12.5%\n");
+     SET_PULSE_WIDTH(CH1, 12_5);
+     break;
+    case 1:
+     puts ("\n; pulse width 25%\n");
+     SET_PULSE_WIDTH(CH1, 25);
+     break;
+    case 2:
+     puts ("\n; pulse width 50%\n");
+     SET_PULSE_WIDTH(CH1, 50);
+     break;
+   }
 }

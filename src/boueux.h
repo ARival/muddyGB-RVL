@@ -16,4 +16,8 @@
 #define PRESSED(KEY) (keys & J_## KEY)
 #define WAIT_KEY_UP(KEY) while (joypad() & J_## KEY) {}
 
+UBYTE scale_position (UBYTE keys);
+void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode);
+void update_duty_cycle (UBYTE duty);
+
 #endif
