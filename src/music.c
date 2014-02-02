@@ -12,8 +12,6 @@ build_scale (UBYTE * scale, UBYTE tonic, SCALE scale_type[])
     scale[i] = scale_type[i] + tonic;
 }
 
-#include <stdio.h>
-
 /* Create array of frequencies with blue (non-chromatic) notes */
 void
 build_blue_freq_map (USHORT * freq_map, UBYTE tonic, USHORT freq_list[])

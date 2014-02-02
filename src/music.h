@@ -7,8 +7,6 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
-#define SCALE const UBYTE const
-
 enum note
 { C, Cs, D, Ds, E, F, Fs, G, Gs, A, As, B, C2 };
 
