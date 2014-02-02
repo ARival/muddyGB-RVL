@@ -7,6 +7,9 @@
 #include "sound.h"
 #include "music.h"
 
+UBYTE blue_mode = OFF;
+USHORT blue_map[8];
+
 void
 main ()
 {
@@ -47,7 +50,7 @@ main ()
         }
        if (PRESSED (LEFT))
         {
-         duty = (duty + 1) % 2;
+         duty = (duty + 1) % 3;
          WAIT_KEY_UP (LEFT);
          update_duty_cycle (duty);
        }
@@ -75,7 +78,7 @@ main ()
       if (pos) /* note being played? */
        {
         CH1_VOL = HIGH;
-        play_freq (note_frequencies[scale[pos - 1] + octave*OCTAVE_LEN]);
+        play_note (scale, pos, octave);
         printf ("%s ", note_names[scale[pos - 1] % OCTAVE_LEN]);
        }
       else
@@ -88,6 +91,15 @@ main ()
       
     delay (1);
    }
+}
+
+void
+play_note (SCALE scale[], UBYTE pos, UBYTE octave)
+{
+  if (blue_mode)
+    play_freq (blue_map[pos - 1]);
+  else
+    play_freq (note_frequencies[scale[pos - 1] + octave*OCTAVE_LEN]);
 }
 
 UBYTE
@@ -116,6 +128,7 @@ scale_position (UBYTE keys)
 #define BUILD(TYPE) \
   printf ("\n; %s %s\n", note_names[tonic], #TYPE); \
   build_scale (scale, tonic, TYPE); \
+  blue_mode = OFF; \
   break;
 
 void
@@ -126,7 +139,12 @@ build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
     case 0: BUILD (ionian);
     case 1: BUILD (aeolian);
     case 2: BUILD (harmonic);
-    case 3: BUILD (blues);
+    case 3:
+      printf ("\n; %s blue\n", note_names[tonic]);
+      build_scale (scale, tonic, ionian);
+      build_blue_freq_map (blue_map, tonic, note_frequencies);
+      blue_mode = ON;
+      break;
     case 4: BUILD (dorian);
     case 5: BUILD (lydian);
    }
@@ -139,15 +157,15 @@ update_duty_cycle (UBYTE duty)
    {
     case 0:
      puts ("\n; pulse width 12.5%\n");
-     SET_PULSE_WIDTH(CH1, 12_5);
+     SET_PULSE_WIDTH (CH1, 12_5);
      break;
     case 1:
      puts ("\n; pulse width 25%\n");
-     SET_PULSE_WIDTH(CH1, 25);
+     SET_PULSE_WIDTH (CH1, 25);
      break;
     case 2:
      puts ("\n; pulse width 50%\n");
-     SET_PULSE_WIDTH(CH1, 50);
+     SET_PULSE_WIDTH (CH1, 50);
      break;
    }
 }
