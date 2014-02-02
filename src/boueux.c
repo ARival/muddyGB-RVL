@@ -41,7 +41,7 @@ main ()
      {
        if (PRESSED (LEFT))
         {
-         mode = (++mode) % 3;
+         mode = (++mode) % NUM_MODES;
          build_scale_mode (scale, root, mode);
          WAIT_KEY_UP (LEFT);
         }

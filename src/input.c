@@ -26,27 +26,21 @@ scale_position (UBYTE keys)
   return 0;
 }
 
+#define BUILD(TYPE) \
+  puts (#TYPE); \
+  build_scale (scale, tonic, TYPE); \
+  break;
+
 void
 build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
 {
   printf ("\nmode: ", mode);
   switch (mode)
    {
-    case 0:
-      puts ("ionian");
-      build_scale (scale, tonic, ionian);
-      break;
-    case 1:
-      puts ("aeolian");
-      build_scale (scale, tonic, aeolian);
-      break;
-    case 2:
-      puts ("harmonic");
-      build_scale (scale, tonic, harmonic);
-      break;
-    case 3:
-      puts ("blues");
-      build_scale (scale, tonic, blues);
-      break;
+    case 0: BUILD (ionian);
+    case 1: BUILD (aeolian);
+    case 2: BUILD (harmonic);
+    case 3: BUILD (blues);
+    case 4: BUILD (ionian);
    }
 }
