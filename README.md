@@ -14,6 +14,7 @@ The START button raises and lowers the scale by an octave.
 The SELECT button acts to select options.
 SELECT + RIGHT selects the current mode.
 SELECT + UP or DOWN selects the scale tonic (base note).
+SELECT + LEFT selects the waveform.
 
 Available modes
 ---------------
@@ -28,4 +29,4 @@ For future versions
 The A button will pitch bend the note being played.
 The B button will raise the pitch by a perfect 4th.
 
-SELECT + LEFT will select the waveform.
+More waveforms will be available.
