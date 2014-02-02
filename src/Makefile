@@ -1,6 +1,6 @@
 CC = lcc
 
-MODULES = input sound music boueux
+MODULES = sound music boueux
 OBJECTS = $(addsuffix .o, $(MODULES))
 
 all: boueux.gb

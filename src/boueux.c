@@ -3,12 +3,11 @@
 
 #include <gb/gb.h>
 #include <stdio.h>
-#include "input.h"
+#include "boueux.h"
 #include "sound.h"
 #include "music.h"
-#include "boueux.h"
 
-#define BUILD_SCALE build_scale_mode (scale, root, mode);
+UBYTE scale_position (UBYTE keys);
 
 void
 main ()
@@ -25,7 +24,7 @@ main ()
   INIT_SOUND;
   MASTER_VOLUME = HIGH;
   
-  BUILD_SCALE;
+  build_scale_mode (scale, root, mode);
   
   for (;;)
    {
@@ -35,7 +34,7 @@ main ()
     if (PRESSED (START))
      {
       octave = !octave;
-      printf ("\n; octave +%d\n", octave);
+      printf ("\n;; octave +%d\n", octave);
       WAIT_KEY_UP (START);
      }
 
@@ -43,25 +42,26 @@ main ()
      {
        if (PRESSED (RIGHT))
         {
-         mode = (++mode) % NUM_MODES;
-         BUILD_SCALE;
+         mode = (mode + 1) % NUM_MODES;
          WAIT_KEY_UP (RIGHT);
+         build_scale_mode (scale, root, mode);
         }
        if (PRESSED (UP))
         {
-         root = (root + 1) % 12;
-         BUILD_SCALE;
+         root = (root + 1) % OCTAVE_LEN;
          WAIT_KEY_UP (UP);
+         build_scale_mode (scale, root, mode);
         }
        if (PRESSED (DOWN))
         {
          if (root == 0)
-           root = 11;
+           root = OCTAVE_LEN - 1;
          else
-           root = (root - 1) % 12;
-         BUILD_SCALE;
+           root = (root - 1) % OCTAVE_LEN;
          WAIT_KEY_UP (DOWN);
+         build_scale_mode (scale, root, mode);
         }
+        
        continue;
      }
 
@@ -70,8 +70,8 @@ main ()
       if (pos) /* note being played? */
        {
         CH1_VOL = HIGH;
-        play_freq (note_frequencies[scale[pos - 1] + octave*12]);
-        printf ("%s ", note_names[scale[pos - 1] % 12]);
+        play_freq (note_frequencies[scale[pos - 1] + octave*OCTAVE_LEN]);
+        printf ("%s ", note_names[scale[pos - 1] % OCTAVE_LEN]);
        }
       else
        {
@@ -81,6 +81,29 @@ main ()
       old_pos = pos;
      }
       
-    delay (LOOP_WAIT_AMOUNT);
+    delay (1);
    }
+}
+
+UBYTE
+scale_position (UBYTE keys)
+{
+  UBYTE dpad_keys = keys & 0x0F; // get lower nibble
+  
+  // only one dpad key being pressed?
+  UBYTE nothing_else = !(dpad_keys & (dpad_keys - 1));
+  
+  if (PRESSED(LEFT)  && nothing_else)   return 1;
+  if (PRESSED(LEFT)  && PRESSED(DOWN))  return 2;
+  
+  if (PRESSED(DOWN)  && nothing_else)   return 3;
+  if (PRESSED(DOWN)  && PRESSED(RIGHT)) return 4;
+  
+  if (PRESSED(RIGHT) && nothing_else)   return 5;
+  if (PRESSED(RIGHT) && PRESSED(UP))    return 6;
+  
+  if (PRESSED(UP)    && nothing_else)   return 7;
+  if (PRESSED(UP)    && PRESSED(LEFT))  return 8;
+
+  return 0;
 }
