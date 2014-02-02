@@ -12,26 +12,7 @@ build_scale (UBYTE * scale, UBYTE tonic, SCALE scale_type[])
     scale[i] = scale_type[i] + tonic;
 }
 
-#define BUILD(TYPE) \
-  printf ("\n; %s %s\n", note_names[tonic], #TYPE); \
-  build_scale (scale, tonic, TYPE); \
-  break;
-
 #include <stdio.h>
-
-void
-build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
-{
-  switch (mode)
-   {
-    case 0: BUILD (ionian);
-    case 1: BUILD (aeolian);
-    case 2: BUILD (harmonic);
-    case 3: BUILD (blues);
-    case 4: BUILD (dorian);
-    case 5: BUILD (lydian);
-   }
-}
 
 /* Create array of frequencies with blue (non-chromatic) notes */
 void

@@ -3,12 +3,9 @@
 
 #include <gb/gb.h>
 #include <stdio.h>
-#include "input.h"
+#include "boueux.h"
 #include "sound.h"
 #include "music.h"
-#include "boueux.h"
-
-#define BUILD_SCALE build_scale_mode (scale, root, mode);
 
 void
 main ()
@@ -18,6 +15,7 @@ main ()
   UBYTE octave = 0;
   UBYTE mode = 0;
   UBYTE root = C;
+  UBYTE duty = 0;
   SCALE scale[8];
 
   printf ("Boueux v%s\n", BOUEUX_VERSION);
@@ -25,7 +23,7 @@ main ()
   INIT_SOUND;
   MASTER_VOLUME = HIGH;
   
-  BUILD_SCALE;
+  build_scale_mode (scale, root, mode);
   
   for (;;)
    {
@@ -35,7 +33,7 @@ main ()
     if (PRESSED (START))
      {
       octave = !octave;
-      printf ("\n; octave +%d\n", octave);
+      printf ("\n;; octave +%d\n", octave);
       WAIT_KEY_UP (START);
      }
 
@@ -43,25 +41,32 @@ main ()
      {
        if (PRESSED (RIGHT))
         {
-         mode = (++mode) % NUM_MODES;
-         BUILD_SCALE;
+         mode = (mode + 1) % NUM_MODES;
          WAIT_KEY_UP (RIGHT);
+         build_scale_mode (scale, root, mode);
         }
+       if (PRESSED (LEFT))
+        {
+         duty = (duty + 1) % 2;
+         WAIT_KEY_UP (LEFT);
+         update_duty_cycle (duty);
+       }
        if (PRESSED (UP))
         {
-         root = (root + 1) % 12;
-         BUILD_SCALE;
+         root = (root + 1) % OCTAVE_LEN;
          WAIT_KEY_UP (UP);
+         build_scale_mode (scale, root, mode);
         }
        if (PRESSED (DOWN))
         {
          if (root == 0)
-           root = 11;
+           root = OCTAVE_LEN - 1;
          else
-           root = (root - 1) % 12;
-         BUILD_SCALE;
+           root = (root - 1) % OCTAVE_LEN;
          WAIT_KEY_UP (DOWN);
+         build_scale_mode (scale, root, mode);
         }
+        
        continue;
      }
 
@@ -70,8 +75,8 @@ main ()
       if (pos) /* note being played? */
        {
         CH1_VOL = HIGH;
-        play_freq (note_frequencies[scale[pos - 1] + octave*12]);
-        printf ("%s ", note_names[scale[pos - 1] % 12]);
+        play_freq (note_frequencies[scale[pos - 1] + octave*OCTAVE_LEN]);
+        printf ("%s ", note_names[scale[pos - 1] % OCTAVE_LEN]);
        }
       else
        {
@@ -81,6 +86,68 @@ main ()
       old_pos = pos;
      }
       
-    delay (LOOP_WAIT_AMOUNT);
+    delay (1);
+   }
+}
+
+UBYTE
+scale_position (UBYTE keys)
+{
+  UBYTE dpad_keys = keys & 0x0F; // get lower nibble
+  
+  // only one dpad key being pressed?
+  UBYTE nothing_else = !(dpad_keys & (dpad_keys - 1));
+  
+  if (PRESSED(LEFT)  && nothing_else)   return 1;
+  if (PRESSED(LEFT)  && PRESSED(DOWN))  return 2;
+  
+  if (PRESSED(DOWN)  && nothing_else)   return 3;
+  if (PRESSED(DOWN)  && PRESSED(RIGHT)) return 4;
+  
+  if (PRESSED(RIGHT) && nothing_else)   return 5;
+  if (PRESSED(RIGHT) && PRESSED(UP))    return 6;
+  
+  if (PRESSED(UP)    && nothing_else)   return 7;
+  if (PRESSED(UP)    && PRESSED(LEFT))  return 8;
+
+  return 0;
+}
+
+#define BUILD(TYPE) \
+  printf ("\n; %s %s\n", note_names[tonic], #TYPE); \
+  build_scale (scale, tonic, TYPE); \
+  break;
+
+void
+build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
+{
+  switch (mode)
+   {
+    case 0: BUILD (ionian);
+    case 1: BUILD (aeolian);
+    case 2: BUILD (harmonic);
+    case 3: BUILD (blues);
+    case 4: BUILD (dorian);
+    case 5: BUILD (lydian);
+   }
+}
+
+void
+update_duty_cycle (UBYTE duty)
+{
+  switch (duty)
+   {
+    case 0:
+     puts ("\n; pulse width 12.5%\n");
+     SET_PULSE_WIDTH(CH1, 12_5);
+     break;
+    case 1:
+     puts ("\n; pulse width 25%\n");
+     SET_PULSE_WIDTH(CH1, 25);
+     break;
+    case 2:
+     puts ("\n; pulse width 50%\n");
+     SET_PULSE_WIDTH(CH1, 50);
+     break;
    }
 }

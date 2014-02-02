@@ -24,6 +24,7 @@ extern SCALE dorian[];
 extern SCALE lydian[];
 
 void build_scale (UBYTE * scale, UBYTE tonic, SCALE scale_type[]);
+void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode);
 void build_blue_freq_map (USHORT * freq_map, UBYTE tonic, USHORT freq_list[]);
 
 #endif
