@@ -1,4 +1,4 @@
-= Boueux.gb is a clone of MuddyGB, a music progam for the Nintendo GameBoy.
+Boueux.gb is a clone of MuddyGB, a music progam for the Nintendo GameBoy.
 For directions on compiling from source, see INSTALL.
 
 == Usage:
@@ -21,6 +21,3 @@ The SELECT button will act to select options.
 SELECT + UP or DOWN will select the scale tonic (base note).
 SELECT + RIGHT will select the current mode.
 SELECT + LEFT will select the waveform.
-
-
-
