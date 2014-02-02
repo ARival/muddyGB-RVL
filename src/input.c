@@ -41,6 +41,7 @@ build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
     case 1: BUILD (aeolian);
     case 2: BUILD (harmonic);
     case 3: BUILD (blues);
-    case 4: BUILD (ionian);
+    case 4: BUILD (dorian);
+    case 5: BUILD (lydian);
    }
 }

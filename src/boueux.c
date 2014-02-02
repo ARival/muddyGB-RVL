@@ -39,11 +39,11 @@ main ()
 
     if (PRESSED (SELECT))
      {
-       if (PRESSED (LEFT))
+       if (PRESSED (RIGHT))
         {
          mode = (++mode) % NUM_MODES;
          build_scale_mode (scale, root, mode);
-         WAIT_KEY_UP (LEFT);
+         WAIT_KEY_UP (RIGHT);
         }
        continue;
      }

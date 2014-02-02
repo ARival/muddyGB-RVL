@@ -7,7 +7,7 @@
 #define INPUT_H
 
 #define LOOP_WAIT_AMOUNT 1
-#define NUM_MODES 4
+#define NUM_MODES 6
 
 #define PRESSED(KEY) (keys & J_## KEY)
 #define WAIT_KEY_UP(KEY) while (joypad() & J_## KEY) {}
