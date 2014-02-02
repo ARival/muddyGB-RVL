@@ -9,6 +9,7 @@
 #define LOOP_WAIT_AMOUNT 1
 
 #define PRESSED(KEY) (keys & J_## KEY)
+#define WAIT_KEY_UP(KEY) while (joypad() & J_## KEY) {}
 
 UBYTE scale_position (UBYTE keys);
 

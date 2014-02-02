@@ -1,6 +1,8 @@
 /* scales.c -- available scales
  */
 
+#include "music.h"
+
 /* Define each scale type available, in semitones from tonic.
    C is defined as 0, so scales are defined relative to C.
  */

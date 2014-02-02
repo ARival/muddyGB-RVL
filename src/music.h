@@ -23,8 +23,6 @@ extern SCALE blues[];
 extern SCALE dorian[];
 extern SCALE lydian[];
 
-#include "scales.c"
-
 void build_scale (UBYTE * scale, UBYTE tonic, SCALE scale_type[]);
 void build_blue_freq_map (USHORT * freq_map, UBYTE tonic, USHORT freq_list[]);
 

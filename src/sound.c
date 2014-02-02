@@ -4,7 +4,7 @@
 #include "sound.h"
 
 /* These frequencies are calculated like 2^11 - (2^17 / FrequencyInHertz).
- * So 2048 represents 2^17 Hz and 0 represents 64 Hz.
+ * So 2048 represents 2^17 Hz (highest freq.) and 0 represents 64 Hz (lowest).
  * This list starts at C3 and ends at C5.
  */
 const USHORT note_frequencies[] = {
@@ -13,8 +13,9 @@ const USHORT note_frequencies[] = {
   1767, 1783, 1798
 };
 
-// Play frequency to channel 1
-// Frequencies are in non-hertz values.
+/* Play frequency to channel 1.
+ * Frequencies are in non-hertz values.
+ */
 void
 play_freq (USHORT freq)
 {

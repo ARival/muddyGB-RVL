@@ -1,7 +1,6 @@
-/* input.c -- dealing with input
- */
-
 #include "input.h"
+
+#define PRESSED(KEY) (keys & J_## KEY)
 
 UBYTE scale_position (UBYTE keys)
 {
