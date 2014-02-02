@@ -1,8 +1,10 @@
+#include <stdio.h>
 #include "input.h"
+#include "music.h"
+#include "sound.h"
 
-#define PRESSED(KEY) (keys & J_## KEY)
-
-UBYTE scale_position (UBYTE keys)
+UBYTE
+scale_position (UBYTE keys)
 {
   UBYTE dpad_keys = keys & 0x0F; // get lower nibble
   
@@ -22,4 +24,29 @@ UBYTE scale_position (UBYTE keys)
   if (PRESSED(UP)    && PRESSED(LEFT))  return 8;
 
   return 0;
+}
+
+void
+build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
+{
+  printf ("\nmode: ", mode);
+  switch (mode)
+   {
+    case 0:
+      puts ("ionian");
+      build_scale (scale, tonic, ionian);
+      break;
+    case 1:
+      puts ("aeolian");
+      build_scale (scale, tonic, aeolian);
+      break;
+    case 2:
+      puts ("harmonic");
+      build_scale (scale, tonic, harmonic);
+      break;
+    case 3:
+      puts ("blues");
+      build_scale (scale, tonic, blues);
+      break;
+   }
 }

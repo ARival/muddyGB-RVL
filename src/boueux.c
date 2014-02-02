@@ -11,7 +11,11 @@
 void
 main ()
 {
-  UBYTE keys, old_pos = 0, pos, octave = 0, mode = 0;
+  UBYTE keys;
+  UBYTE pos, old_pos = 0;
+  UBYTE octave = 0;
+  UBYTE mode = 0;
+  UBYTE root = C;
   SCALE scale[8];
 
   printf ("Boueux v%s\n", BOUEUX_VERSION);
@@ -19,13 +23,13 @@ main ()
   INIT_SOUND;
   MASTER_VOLUME = HIGH;
   
-  build_scale (scale, C, ionian);
+  build_scale (scale, root, ionian);
   
   for (;;)
    {
     keys = joypad();
     pos = scale_position(keys);
-      
+    
     if (PRESSED (START))
      {
       octave = !octave;
@@ -38,7 +42,7 @@ main ()
        if (PRESSED (LEFT))
         {
          mode = (++mode) % 3;
-         printf ("\nmode: %d\n", mode);
+         build_scale_mode (scale, root, mode);
          WAIT_KEY_UP (LEFT);
         }
        continue;
