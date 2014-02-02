@@ -1,0 +1,20 @@
+Installation Instructions
+*************************
+
+These instructions are for compiling boueux from source.
+If the distribution that you recieved already contains the file boueux.gb,
+use that file like you would any other GameBoy ROM image.
+
+Dependencies
+============
+
+GBDK <http://gbdk.sourceforge.net/> is required to compile from source.
+Make <http://www.gnu.org/software/make/> is also used.
+
+Compiling from source
+=====================
+
+There are currently no configuration options.
+
+    $ cd src
+    $ make
