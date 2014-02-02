@@ -33,6 +33,7 @@ main ()
     keys = joypad ();
     pos = scale_position (keys);
     
+    /* Change octave */
     if (PRESSED (START))
      {
       octave = !octave;
@@ -42,24 +43,28 @@ main ()
 
     if (PRESSED (SELECT))
      {
+       /* Change mode */
        if (PRESSED (RIGHT))
         {
          mode = (mode + 1) % NUM_MODES;
          WAIT_KEY_UP (RIGHT);
          build_scale_mode (scale, root, mode);
         }
+       /* Change waveform */
        if (PRESSED (LEFT))
         {
          duty = (duty + 1) % 3;
          WAIT_KEY_UP (LEFT);
          update_duty_cycle (duty);
        }
+       /* Increment root note */
        if (PRESSED (UP))
         {
          root = (root + 1) % OCTAVE_LEN;
          WAIT_KEY_UP (UP);
          build_scale_mode (scale, root, mode);
         }
+       /* Decrement root note */
        if (PRESSED (DOWN))
         {
          if (root == 0)
@@ -75,13 +80,13 @@ main ()
 
      if (pos != old_pos)
      {
-      if (pos) /* note being played? */
+      if (pos) /* Play note */
        {
         CH1_VOL = HIGH;
         play_note (scale, pos, octave);
         printf ("%s ", note_names[scale[pos - 1] % OCTAVE_LEN]);
        }
-      else
+      else /* Stop note */
        {
         CH1_VOL = OFF;
         printf (". ");
@@ -96,20 +101,17 @@ main ()
 UBYTE
 scale_position (UBYTE keys)
 {
-  // only one dpad key being pressed?
-  UBYTE nothing_else = !(DPAD_KEYS & (DPAD_KEYS - 1));
+  if (PRESSED(LEFT)  && ONLY_ONE_DPAD_KEY) return 1;
+  if (PRESSED(LEFT)  && PRESSED(DOWN))     return 2;
   
-  if (PRESSED(LEFT)  && nothing_else)   return 1;
-  if (PRESSED(LEFT)  && PRESSED(DOWN))  return 2;
+  if (PRESSED(DOWN)  && ONLY_ONE_DPAD_KEY) return 3;
+  if (PRESSED(DOWN)  && PRESSED(RIGHT))    return 4;
   
-  if (PRESSED(DOWN)  && nothing_else)   return 3;
-  if (PRESSED(DOWN)  && PRESSED(RIGHT)) return 4;
+  if (PRESSED(RIGHT) && ONLY_ONE_DPAD_KEY) return 5;
+  if (PRESSED(RIGHT) && PRESSED(UP))       return 6;
   
-  if (PRESSED(RIGHT) && nothing_else)   return 5;
-  if (PRESSED(RIGHT) && PRESSED(UP))    return 6;
-  
-  if (PRESSED(UP)    && nothing_else)   return 7;
-  if (PRESSED(UP)    && PRESSED(LEFT))  return 8;
+  if (PRESSED(UP)    && ONLY_ONE_DPAD_KEY) return 7;
+  if (PRESSED(UP)    && PRESSED(LEFT))     return 8;
 
   return 0;
 }

@@ -17,6 +17,7 @@
 #define PRESSED(KEY) (keys & J_## KEY)
 #define WAIT_KEY_UP(KEY) while (joypad () & J_## KEY) {}
 #define DPAD_KEYS (keys & 0x0F)
+#define ONLY_ONE_DPAD_KEY !(DPAD_KEYS & (DPAD_KEYS - 1))
 
 UBYTE scale_position (UBYTE keys);
 
