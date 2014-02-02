@@ -20,7 +20,7 @@ Available modes
 
 Ionian (Major), Aeolian (Natural minor), Harmonic minor, Blues, Dorian, Lydian
 
-(see scales.c)
+(see src/scales.c)
 
 For future versions
 -------------------
