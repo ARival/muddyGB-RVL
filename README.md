@@ -18,9 +18,9 @@ SELECT + UP or DOWN selects the scale tonic (base note).
 Available modes
 ---------------
 
-Ionian (Major), Aeolian (Natural minor), Harmonic minor, Blues, Dorian, Lydian
+Ionian (Major), Aeolian (Natural minor), Harmonic minor, Blue, Dorian, Lydian
 
-(see src/scales.c)
+(see scales.c)
 
 For future versions
 -------------------
