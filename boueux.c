@@ -3,6 +3,7 @@
 
 #include <gb/gb.h>
 #include <stdio.h>
+#include <gb/font.h>
 #include "boueux.h"
 #include "sound.h"
 #include "music.h"
@@ -21,10 +22,10 @@ main ()
   UBYTE duty = 0;
   SCALE scale[8];
 
-  printf ("Boueux v%s\n", BOUEUX_VERSION);
-
   INIT_SOUND;
   MASTER_VOLUME = HIGH;
+ 
+  printf ("*** Boueux v%s\n", BOUEUX_VERSION);
   
   build_scale_mode (scale, root, mode);
   
@@ -37,7 +38,7 @@ main ()
     if (PRESSED (START))
      {
       octave = !octave;
-      printf ("\n;; octave +%d\n", octave);
+      printf ("\n*** octave +%d\n", octave);
       WAIT_KEY_UP (START);
      }
 
@@ -53,25 +54,25 @@ main ()
        /* Change waveform */
        if (PRESSED (LEFT))
         {
-         duty = (duty + 1) % 3;
          WAIT_KEY_UP (LEFT);
+         duty = (duty + 1) % 3;
          update_duty_cycle (duty);
        }
        /* Increment root note */
        if (PRESSED (UP))
         {
-         root = (root + 1) % OCTAVE_LEN;
          WAIT_KEY_UP (UP);
+         root = (root + 1) % OCTAVE_LEN;
          build_scale_mode (scale, root, mode);
         }
        /* Decrement root note */
        if (PRESSED (DOWN))
         {
+         WAIT_KEY_UP (DOWN);
          if (root == 0)
            root = OCTAVE_LEN - 1;
          else
            root = (root - 1) % OCTAVE_LEN;
-         WAIT_KEY_UP (DOWN);
          build_scale_mode (scale, root, mode);
         }
         
@@ -126,7 +127,7 @@ play_note (UBYTE * scale, UBYTE pos, UBYTE octave)
 }
 
 #define BUILD(TYPE) \
-  printf ("\n; %s %s\n", note_names[tonic], #TYPE); \
+  printf ("\n*** %s %s\n", note_names[tonic], #TYPE); \
   build_scale (scale, tonic, TYPE); \
   blue_mode = OFF; \
   break;
@@ -140,7 +141,7 @@ build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
     case 1: BUILD (aeolian);
     case 2: BUILD (harmonic);
     case 3:
-      printf ("\n; %s blue\n", note_names[tonic]);
+      printf ("\n*** %s blue\n", note_names[tonic]);
       build_scale (scale, tonic, ionian);
       build_blue_freq_map (blue_map, tonic, note_frequencies);
       blue_mode = ON;
@@ -156,15 +157,15 @@ update_duty_cycle (UBYTE duty)
   switch (duty)
    {
     case 0:
-     puts ("\n; pulse width 12.5%\n");
+     puts ("\n*** pulse width 12.5%\n");
      SET_PULSE_WIDTH (CH1, 12_5);
      break;
     case 1:
-     puts ("\n; pulse width 25%\n");
+     puts ("\n*** pulse width 25%\n");
      SET_PULSE_WIDTH (CH1, 25);
      break;
     case 2:
-     puts ("\n; pulse width 50%\n");
+     puts ("\n*** pulse width 50%\n");
      SET_PULSE_WIDTH (CH1, 50);
      break;
    }

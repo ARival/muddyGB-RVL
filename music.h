@@ -17,7 +17,6 @@ const char *note_names[] = {
 extern SCALE ionian[];
 extern SCALE aeolian[];
 extern SCALE harmonic[];
-extern SCALE blues[];
 extern SCALE dorian[];
 extern SCALE lydian[];
 
