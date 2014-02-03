@@ -9,8 +9,6 @@
 #include "sound.h"
 #include "music.h"
 
-UBYTE waveform = pulse_50;
-
 void
 main ()
 {
@@ -19,6 +17,7 @@ main ()
   UBYTE note, old_note = 0;
   UBYTE relative_octave = 0;
   UBYTE absolute_octave;
+  UBYTE waveform = pulse_50;
   UBYTE mode = 0;
   UBYTE root = C;
   SCALE scale[8];
@@ -29,12 +28,12 @@ main ()
   small_font = font_load (font_spect);
   font_set (big_font);
  
+  printf (";; Boueux v%s\n", BOUEUX_VERSION);
+ 
   INIT_SOUND;
   MASTER_VOLUME = OFF;
-  update_waveform ();
+  update_waveform (waveform);
   MASTER_VOLUME = HIGH;
-  
-  printf (";; Boueux v%s\n", BOUEUX_VERSION);
   
   build_scale_mode (scale, root, mode);
   
@@ -75,7 +74,7 @@ main ()
         {
          WAIT_KEY_UP (LEFT);
          waveform = (waveform + 1) % NUM_WAVEFORMS;
-         update_waveform ();
+         update_waveform (waveform);
        }
        /* Increment root note */
        if (PRESSED (UP))
@@ -105,7 +104,7 @@ main ()
         CH1_VOL = HIGH;
         CH2_VOL = HIGH;
         
-        play_note (note);
+        play_note (note, waveform);
         
         font_set (small_font);
         printf (note_names[note % OCTAVE_LEN]);
@@ -153,7 +152,7 @@ scale_position (UBYTE keys)
 }
 
 void
-play_note (UBYTE note)
+play_note (UBYTE note, UBYTE waveform)
 {
   USHORT freq, freq2 = 0;
   freq = note_frequencies[note];
@@ -202,7 +201,7 @@ build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
 }
 
 void
-update_waveform (void)
+update_waveform (UBYTE waveform)
 {
   CH1_VOL = HIGH;
   CH2_VOL = HIGH;
