@@ -65,7 +65,7 @@ main ()
         {
          WAIT_KEY_UP (LEFT);
          duty = (duty + 1) % 6;
-         update_duty_cycle (duty);
+         update_duty_cycle ();
        }
        /* Increment root note */
        if (PRESSED (UP))
@@ -186,7 +186,7 @@ build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
 }
 
 void
-update_duty_cycle (UBYTE duty)
+update_duty_cycle (void)
 {
   CH1 = RESET;
   CH2 = RESET;

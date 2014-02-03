@@ -26,6 +26,6 @@ UBYTE scale_position (UBYTE keys);
 
 void play_note (UBYTE * scale, UBYTE pos, UBYTE octave);
 void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode);
-void update_duty_cycle (UBYTE duty);
+void update_duty_cycle (void);
 
 #endif
