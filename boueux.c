@@ -4,7 +4,6 @@
 #include <gb/gb.h>
 #include <stdio.h>
 #include <gb/font.h>
-#include <rand.h>
 #include <time.h>
 #include "boueux.h"
 #include "sound.h"
@@ -124,7 +123,9 @@ main ()
         printf (". ");
        }
      }
-     
+    
+    if (waveform == wawa) wawa_update();
+    
     old_note = note;
     old_pos = pos;
    }
@@ -168,6 +169,11 @@ play_note (UBYTE note)
       play_freq_ch1 (freq);
       play_freq_ch2 (freq + 1);
       break;
+    case echo:
+      play_freq_ch1 (freq);
+      delay (500);
+      play_freq_ch2 (freq);
+      break;
     default:
       play_freq_ch1 (freq);
       play_freq_ch2 (freq);
@@ -200,6 +206,7 @@ update_waveform (void)
 {
   CH1 = RESET;
   CH2 = RESET;
+  CH2_VOL = HIGH;
   
   switch (waveform)
    {
@@ -233,5 +240,34 @@ update_waveform (void)
      SET_PULSE_WIDTH (CH1, 50);
      SET_PULSE_WIDTH (CH2, 50);
      break;
+    case wawa:
+     puts ("\n;; waveform wawa");
+     SET_PULSE_WIDTH (CH1, 50);
+     SET_PULSE_WIDTH (CH2, 12_5);
+     break;
+    case echo:
+     puts ("\n;; waveform echo");
+     SET_PULSE_WIDTH (CH1, 50);
+     SET_PULSE_WIDTH (CH2, 50);
+     
+     CH2_VOL = 0x88;
+     break;
+   }
+}
+
+void
+wawa_update (void)
+{
+  switch ((clock () % 60) / 20)
+   {
+    case 0:
+      SET_PULSE_WIDTH (CH2, 12_5);
+      break;
+    case 1:
+      SET_PULSE_WIDTH (CH2, 25);
+      break;
+    case 2:
+      SET_PULSE_WIDTH (CH2, 50);
+      break;
    }
 }

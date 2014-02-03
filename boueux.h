@@ -18,12 +18,14 @@
 #define WAIT_KEY_UP(KEY) while (joypad () & J_## KEY) {}
 
 enum Waveforms
-{ pulse_50, pulse_25, pulse_12_5, sawlike, waver, perfect_5ths, NUM_WAVEFORMS };
+{ pulse_50, pulse_25, pulse_12_5, sawlike, waver, perfect_5ths, wawa, echo,
+  NUM_WAVEFORMS };
 
 UBYTE scale_position (UBYTE keys);
 
 void play_note (UBYTE note);
 void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode);
 void update_waveform (void);
+void wawa_update (void);
 
 #endif
