@@ -9,9 +9,6 @@
 #include "sound.h"
 #include "music.h"
 
-BOOLEAN blue_mode = OFF;
-USHORT blue_map[8];
-
 void play_p5 (UBYTE * scale, UBYTE pos, UBYTE octave);
 
 void
@@ -154,10 +151,7 @@ scale_position (UBYTE keys)
 void
 play_note (UBYTE * scale, UBYTE pos, UBYTE octave)
 {
-  if (blue_mode)
-    play_freq (blue_map[pos - 1]);
-  else
-    play_freq (note_frequencies[scale[pos - 1] + octave*OCTAVE_LEN]);
+  play_freq (note_frequencies[scale[pos - 1] + octave*OCTAVE_LEN]);
 }
 
 void
@@ -189,16 +183,10 @@ build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
     case 0: BUILD (ionian);
     case 1: BUILD (aeolian);
     case 2: BUILD (harmonic);
-    case 3:
-      printf ("\n;; %s blue\n", note_names[tonic]);
-      build_scale (scale, tonic, ionian);
-      build_blue_freq_map (blue_map, tonic, note_frequencies);
-      blue_mode = ON;
-      break;
-    case 4: BUILD (dorian);
-    case 5: BUILD (lydian);
-    case 6: BUILD (wholetone);
-    case 7: BUILD (blues);
+    case 3: BUILD (dorian);
+    case 4: BUILD (lydian);
+    case 5: BUILD (wholetone);
+    case 6: BUILD (blues);
    }
 }
 
