@@ -9,7 +9,7 @@
 #include "sound.h"
 #include "music.h"
 
-void play_p5 (UBYTE * scale, UBYTE pos, UBYTE octave);
+UBYTE duty = 0;
 
 void
 main ()
@@ -20,7 +20,6 @@ main ()
   UBYTE absolute_octave;
   UBYTE mode = 0;
   UBYTE root = C;
-  UBYTE duty = 0;
   SCALE scale[8];
   UBYTE rand_data;
 
@@ -96,10 +95,7 @@ main ()
         CH1_VOL = HIGH;
         CH2_VOL = HIGH;
         
-        if (duty == perfect_5ths)
-          play_p5 (scale, pos, relative_octave);
-        else
-          play_note (scale, pos, relative_octave);
+        play_note (scale, pos, relative_octave);
           
         font_set (small_font);
         printf (note_names[scale[pos - 1] % OCTAVE_LEN]);
@@ -151,28 +147,27 @@ scale_position (UBYTE keys)
 void
 play_note (UBYTE * scale, UBYTE pos, UBYTE octave)
 {
-  play_freq (note_frequencies[scale[pos - 1] + octave*OCTAVE_LEN]);
-}
-
-void
-play_p5 (UBYTE * scale, UBYTE pos, UBYTE octave)
-{
-  USHORT freq1 = (note_frequencies[scale[pos - 1] + octave*OCTAVE_LEN]);
-  USHORT freq2 = (note_frequencies[scale[pos - 1] + octave*OCTAVE_LEN + 5]);
+  UBYTE note = scale[pos - 1] + octave*OCTAVE_LEN;
+  USHORT freq, freq2 = 0;
+  freq = note_frequencies[note];
   
-  /* Channel 1 */
-  NR13_REG = (unsigned char) freq1;
-  NR14_REG = 0x80 | (freq1 >> 8);
-  
-  /* Channel 2 */
-  NR23_REG = (unsigned char) freq2;
-  NR24_REG = 0x80 | (freq2 >> 8);
+  if (duty == perfect_5ths)
+   {
+    // up a perfect 5th
+    USHORT freq2 = note_frequencies[note + 7];
+    play_freq_ch1 (freq);
+    play_freq_ch2 (freq2);
+   }
+  else
+   {
+    play_freq_ch1 (freq);
+    play_freq_ch2 (freq);
+   }
 }
 
 #define BUILD(TYPE) \
   printf ("\n;; %s %s\n", note_names[tonic], #TYPE); \
   build_scale (scale, tonic, TYPE); \
-  blue_mode = OFF; \
   break;
 
 void
