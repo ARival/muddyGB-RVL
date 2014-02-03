@@ -19,6 +19,9 @@
 #define DPAD_KEYS (keys & 0x0F)
 #define ONLY_ONE_DPAD_KEY !(DPAD_KEYS & (DPAD_KEYS - 1))
 
+enum waveform
+{ pulse_50, pulse_25, pulse_12_5, sawlike, noisy, perfect_5ths };
+
 UBYTE scale_position (UBYTE keys);
 
 void play_note (UBYTE * scale, UBYTE pos, UBYTE octave);
