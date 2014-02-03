@@ -42,3 +42,11 @@ For future versions
 
 The A button will pitch bend the note being played.
 The B button will raise the pitch by a perfect 4th.
+
+Compiling from source
+--------------------
+
+There are currently no configuration options.
+With GBDK installed, run
+
+    $ make
