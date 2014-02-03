@@ -25,9 +25,21 @@
 #define CH1_VOL NR12_REG
 #define CH1 NR14_REG
 
+#define CH2_SWEEP NR20_REG
+#define CH2_DUTY_CYCLE NR21_REG
+#define CH2_VOL NR22_REG
+#define CH2 NR24_REG
+
+/*
 #define PULSE_WIDTH_12_5 0x20
 #define PULSE_WIDTH_25 0x40
 #define PULSE_WIDTH_50 0x80
+*/
+
+#define PULSE_WIDTH_12_5 0x20
+#define PULSE_WIDTH_25 0x40
+#define PULSE_WIDTH_50 0x80
+#define PULSE_WIDTH_75 0x70
 
 #define SET_PULSE_WIDTH(CH, DUTY) (CH## _DUTY_CYCLE) = (PULSE_WIDTH_## DUTY);
 

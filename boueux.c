@@ -4,11 +4,12 @@
 #include <gb/gb.h>
 #include <stdio.h>
 #include <gb/font.h>
+#include <rand.h>
 #include "boueux.h"
 #include "sound.h"
 #include "music.h"
 
-UBYTE blue_mode = OFF;
+BOOLEAN blue_mode = OFF;
 USHORT blue_map[8];
 
 void
@@ -21,11 +22,21 @@ main ()
   UBYTE root = C;
   UBYTE duty = 0;
   SCALE scale[8];
+  UBYTE s;
 
+  font_t big_font, small_font;
+  font_init ();
+  big_font = font_load (font_ibm);
+  small_font = font_load (font_spect);
+  font_set (big_font);
+ 
+  initarand (0);
+  
   INIT_SOUND;
   MASTER_VOLUME = HIGH;
  
-  printf ("*** Boueux v%s\n", BOUEUX_VERSION);
+  s = arand();
+  printf (";; Boueux v%s\n", BOUEUX_VERSION);
   
   build_scale_mode (scale, root, mode);
   
@@ -38,7 +49,7 @@ main ()
     if (PRESSED (START))
      {
       octave = !octave;
-      printf ("\n*** octave +%d\n", octave);
+      printf ("\n;; octave +%d\n", octave);
       WAIT_KEY_UP (START);
      }
 
@@ -55,7 +66,7 @@ main ()
        if (PRESSED (LEFT))
         {
          WAIT_KEY_UP (LEFT);
-         duty = (duty + 1) % 3;
+         duty = (duty + 1) % 5;
          update_duty_cycle (duty);
        }
        /* Increment root note */
@@ -84,17 +95,28 @@ main ()
       if (pos) /* Play note */
        {
         CH1_VOL = HIGH;
+        CH2_VOL = HIGH;
         play_note (scale, pos, octave);
+        font_set (small_font);
         printf ("%s ", note_names[scale[pos - 1] % OCTAVE_LEN]);
+        font_set (big_font);
        }
       else /* Stop note */
        {
         CH1_VOL = OFF;
+        CH2_VOL = OFF;
         printf (". ");
        }
       old_pos = pos;
      }
-      
+    
+    if (duty == 4)
+     {
+      s = arand();
+      // create noisiness in channel 1
+      NR13_REG = ((NR13_REG + s/127) - 1);
+     }
+     
     delay (1);
    }
 }
@@ -127,7 +149,7 @@ play_note (UBYTE * scale, UBYTE pos, UBYTE octave)
 }
 
 #define BUILD(TYPE) \
-  printf ("\n*** %s %s\n", note_names[tonic], #TYPE); \
+  printf ("\n;; %s %s\n", note_names[tonic], #TYPE); \
   build_scale (scale, tonic, TYPE); \
   blue_mode = OFF; \
   break;
@@ -141,13 +163,15 @@ build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
     case 1: BUILD (aeolian);
     case 2: BUILD (harmonic);
     case 3:
-      printf ("\n*** %s blue\n", note_names[tonic]);
+      printf ("\n;; %s blue\n", note_names[tonic]);
       build_scale (scale, tonic, ionian);
       build_blue_freq_map (blue_map, tonic, note_frequencies);
       blue_mode = ON;
       break;
     case 4: BUILD (dorian);
     case 5: BUILD (lydian);
+    case 6: BUILD (wholetone);
+    case 7: BUILD (blues);
    }
 }
 
@@ -157,16 +181,29 @@ update_duty_cycle (UBYTE duty)
   switch (duty)
    {
     case 0:
-     puts ("\n*** pulse width 12.5%\n");
+     puts ("\n;; waveform 12.5%");
      SET_PULSE_WIDTH (CH1, 12_5);
+     SET_PULSE_WIDTH (CH2, 12_5);
      break;
     case 1:
-     puts ("\n*** pulse width 25%\n");
+     puts ("\n;; waveform 25%");
      SET_PULSE_WIDTH (CH1, 25);
+     SET_PULSE_WIDTH (CH2, 25);
      break;
     case 2:
-     puts ("\n*** pulse width 50%\n");
+     puts ("\n;; waveform 50%");
      SET_PULSE_WIDTH (CH1, 50);
+     SET_PULSE_WIDTH (CH2, 50);
+     break;
+    case 3:
+     puts ("\n;; waveform sawlike");
+     SET_PULSE_WIDTH (CH1, 50);
+     SET_PULSE_WIDTH (CH2, 12_5);
+     break;
+    case 4:
+     puts ("\n;; waveform noisy");
+     SET_PULSE_WIDTH (CH1, 12_5);
+     SET_PULSE_WIDTH (CH2, 25);
      break;
    }
 }
