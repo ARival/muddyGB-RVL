@@ -16,14 +16,17 @@ const USHORT note_frequencies[] = {
 /* Play frequency to channel 1 and 2.
  * Frequencies are in non-hertz values.
  */
+
 void
-play_freq (USHORT freq)
+play_freq_ch1 (USHORT freq)
 {
-  /* Channel 1 */
   NR13_REG = (unsigned char) freq;
   NR14_REG = 0x80 | (freq >> 8);
-  
-  /* Channel 2 */
+}
+
+void
+play_freq_ch2 (USHORT freq)
+{
   NR23_REG = (unsigned char) freq;
   NR24_REG = 0x80 | (freq >> 8);
 }

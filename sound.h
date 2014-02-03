@@ -38,6 +38,7 @@
 
 extern const USHORT note_frequencies[];
 
-void play_freq (USHORT f);
+void play_freq_ch1 (USHORT f);
+void play_freq_ch2 (USHORT f);
 
 #endif
