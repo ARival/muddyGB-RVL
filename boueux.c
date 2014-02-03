@@ -17,7 +17,7 @@ main ()
 {
   UBYTE keys;
   UBYTE pos, old_pos = 0;
-  UBYTE note, old_note = -1;
+  UBYTE note, old_note = 0;
   UBYTE relative_octave = 0;
   UBYTE absolute_octave;
   UBYTE mode = 0;
@@ -31,21 +31,28 @@ main ()
   font_set (big_font);
  
   INIT_SOUND;
+  MASTER_VOLUME = OFF;
+  update_waveform ();
   MASTER_VOLUME = HIGH;
- 
+  
   printf (";; Boueux v%s\n", BOUEUX_VERSION);
   
-  update_waveform ();
   build_scale_mode (scale, root, mode);
   
   for (;;)
    {
     keys = joypad ();
     pos = scale_position (keys);
-     
-    note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
-      
-    if (PRESSED (B)) note += (F - C); // raise by perfect 4th (5 semitones)
+    
+    if (pos)
+     {
+      note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
+    
+      /* Raise by perfect 4th */
+      if (PRESSED (B)) note += 5; /* a perfect fourth = 5 semitones */
+      /* Lower by semitone */
+      if (PRESSED (A)) note -= 1;
+     }
     
     /* Change octave */
     if (PRESSED (START))
@@ -94,7 +101,7 @@ main ()
 
      if ((note != old_note) || (pos != old_pos))
      {
-      if (note || pos) /* Note will be played */
+      if (pos) /* Note will be played */
        {
         CH1_VOL = HIGH;
         CH2_VOL = HIGH;
