@@ -68,7 +68,7 @@ main ()
        if (PRESSED (LEFT))
         {
          WAIT_KEY_UP (LEFT);
-         waveform = (waveform + 1) % 6;
+         waveform = (waveform + 1) % NUM_WAVEFORMS;
          update_waveform ();
        }
        /* Increment root note */

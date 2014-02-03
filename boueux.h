@@ -17,8 +17,8 @@
 #define PRESSED(KEY) (keys & J_## KEY)
 #define WAIT_KEY_UP(KEY) while (joypad () & J_## KEY) {}
 
-enum waveform_enum
-{ pulse_50, pulse_25, pulse_12_5, sawlike, waver, perfect_5ths };
+enum Waveforms
+{ pulse_50, pulse_25, pulse_12_5, sawlike, waver, perfect_5ths, NUM_WAVEFORMS };
 
 UBYTE scale_position (UBYTE keys);
 
