@@ -17,13 +17,13 @@
 #define PRESSED(KEY) (keys & J_## KEY)
 #define WAIT_KEY_UP(KEY) while (joypad () & J_## KEY) {}
 
-enum waveform
+enum waveform_enum
 { pulse_50, pulse_25, pulse_12_5, sawlike, waver, perfect_5ths };
 
 UBYTE scale_position (UBYTE keys);
 
 void play_note (UBYTE * scale, UBYTE pos);
 void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode);
-void update_duty_cycle (void);
+void update_waveform (void);
 
 #endif

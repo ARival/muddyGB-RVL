@@ -35,7 +35,7 @@ Available waveforms
 
 * Pulse waves perfect 5ths apart
 
-(see `play_note` and `update_duty_cycle` in boueux.c)
+(see `play_note` and `update_waveform` in boueux.c)
 
 For future versions
 -------------------

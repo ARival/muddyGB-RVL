@@ -10,7 +10,7 @@
 #include "sound.h"
 #include "music.h"
 
-UBYTE duty = pulse_50;
+UBYTE waveform = pulse_50;
 UBYTE relative_octave = 0;
 
 void
@@ -34,7 +34,7 @@ main ()
  
   printf (";; Boueux v%s\n", BOUEUX_VERSION);
   
-  update_duty_cycle ();
+  update_waveform ();
   build_scale_mode (scale, root, mode);
   
   for (;;)
@@ -63,8 +63,8 @@ main ()
        if (PRESSED (LEFT))
         {
          WAIT_KEY_UP (LEFT);
-         duty = (duty + 1) % 6;
-         update_duty_cycle ();
+         waveform = (waveform + 1) % 6;
+         update_waveform ();
        }
        /* Increment root note */
        if (PRESSED (UP))
@@ -145,14 +145,14 @@ play_note (UBYTE * scale, UBYTE pos)
   USHORT freq, freq2 = 0;
   freq = note_frequencies[note];
   
-  if (duty == perfect_5ths)
+  if (waveform == perfect_5ths)
    {
     // up a perfect 5th
     USHORT freq2 = note_frequencies[note + 7];
     play_freq_ch1 (freq);
     play_freq_ch2 (freq2);
    }
-  else if (duty == waver)
+  else if (waveform == waver)
    {
     play_freq_ch1 (freq);
     play_freq_ch2 (freq + 1);
@@ -185,12 +185,12 @@ build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
 }
 
 void
-update_duty_cycle (void)
+update_waveform (void)
 {
   CH1 = RESET;
   CH2 = RESET;
   
-  switch (duty)
+  switch (waveform)
    {
     case pulse_50:
      puts ("\n;; waveform 50%");
