@@ -5,23 +5,23 @@
 #include <stdio.h>
 #include <gb/font.h>
 #include <rand.h>
+#include <time.h>
 #include "boueux.h"
 #include "sound.h"
 #include "music.h"
 
-UBYTE duty = 0;
+UBYTE duty = pulse_50;
+UBYTE relative_octave = 0;
 
 void
 main ()
 {
   UBYTE keys;
   UBYTE pos, old_pos = 0;
-  UBYTE relative_octave = 0;
   UBYTE absolute_octave;
   UBYTE mode = 0;
   UBYTE root = C;
   SCALE scale[8];
-  UBYTE rand_data;
 
   font_t big_font, small_font;
   font_init ();
@@ -29,13 +29,12 @@ main ()
   small_font = font_load (font_spect);
   font_set (big_font);
  
-  initarand (0);
-  
   INIT_SOUND;
   MASTER_VOLUME = HIGH;
  
   printf (";; Boueux v%s\n", BOUEUX_VERSION);
   
+  update_duty_cycle ();
   build_scale_mode (scale, root, mode);
   
   for (;;)
@@ -95,7 +94,7 @@ main ()
         CH1_VOL = HIGH;
         CH2_VOL = HIGH;
         
-        play_note (scale, pos, relative_octave);
+        play_note (scale, pos);
           
         font_set (small_font);
         printf (note_names[scale[pos - 1] % OCTAVE_LEN]);
@@ -114,40 +113,35 @@ main ()
        }
       old_pos = pos;
      }
-    
-    if (duty == noisy)
-     {
-      rand_data = arand();
-      // create noisiness in channel 1
-      NR13_REG = ((NR13_REG + (USHORT)(rand_data/127)) - 1);
-     }
-     
-    delay (1);
+    //delay (1);
    }
 }
 
 UBYTE
 scale_position (UBYTE keys)
 {
-  if (PRESSED(LEFT)  && ONLY_ONE_DPAD_KEY) return 1;
-  if (PRESSED(LEFT)  && PRESSED(DOWN))     return 2;
+  // is only one d-pad key being pressed?
+  BOOLEAN nothing_else = !((keys & 0x0F) & ((keys & 0x0F) - 1));
+
+  if (PRESSED (LEFT)  && nothing_else)    return 1;
+  if (PRESSED (LEFT)  && PRESSED (DOWN))  return 2;
   
-  if (PRESSED(DOWN)  && ONLY_ONE_DPAD_KEY) return 3;
-  if (PRESSED(DOWN)  && PRESSED(RIGHT))    return 4;
+  if (PRESSED (DOWN)  && nothing_else)    return 3;
+  if (PRESSED (DOWN)  && PRESSED (RIGHT)) return 4;
   
-  if (PRESSED(RIGHT) && ONLY_ONE_DPAD_KEY) return 5;
-  if (PRESSED(RIGHT) && PRESSED(UP))       return 6;
+  if (PRESSED (RIGHT) && nothing_else)    return 5;
+  if (PRESSED (RIGHT) && PRESSED (UP))    return 6;
   
-  if (PRESSED(UP)    && ONLY_ONE_DPAD_KEY) return 7;
-  if (PRESSED(UP)    && PRESSED(LEFT))     return 8;
+  if (PRESSED (UP)    && nothing_else)    return 7;
+  if (PRESSED (UP)    && PRESSED (LEFT))  return 8;
 
   return 0;
 }
 
 void
-play_note (UBYTE * scale, UBYTE pos, UBYTE octave)
+play_note (UBYTE * scale, UBYTE pos)
 {
-  UBYTE note = scale[pos - 1] + octave*OCTAVE_LEN;
+  UBYTE note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
   USHORT freq, freq2 = 0;
   freq = note_frequencies[note];
   
@@ -158,6 +152,11 @@ play_note (UBYTE * scale, UBYTE pos, UBYTE octave)
     play_freq_ch1 (freq);
     play_freq_ch2 (freq2);
    }
+  else if (duty == waver)
+   {
+    play_freq_ch1 (freq);
+    play_freq_ch2 (freq + 1);
+   }
   else
    {
     play_freq_ch1 (freq);
@@ -166,7 +165,7 @@ play_note (UBYTE * scale, UBYTE pos, UBYTE octave)
 }
 
 #define BUILD(TYPE) \
-  printf ("\n;; %s %s\n", note_names[tonic], #TYPE); \
+  printf ("\n;; mode %s %s\n", note_names[tonic], #TYPE); \
   build_scale (scale, tonic, TYPE); \
   break;
 
@@ -213,15 +212,15 @@ update_duty_cycle (void)
      SET_PULSE_WIDTH (CH1, 50);
      SET_PULSE_WIDTH (CH2, 12_5);
      break;
-    case noisy:
-     puts ("\n;; waveform noisy");
+    case waver:
+     puts ("\n;; waveform waver");
      SET_PULSE_WIDTH (CH1, 12_5);
      SET_PULSE_WIDTH (CH2, 25);
      break;
     case perfect_5ths:
-     puts ("\n;; perfect 5ths");
+     puts ("\n;; waveform 5ths");
      SET_PULSE_WIDTH (CH1, 50);
-     SET_PULSE_WIDTH (CH2, 12_5);
+     SET_PULSE_WIDTH (CH2, 50);
      break;
    }
 }

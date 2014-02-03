@@ -16,15 +16,13 @@
 
 #define PRESSED(KEY) (keys & J_## KEY)
 #define WAIT_KEY_UP(KEY) while (joypad () & J_## KEY) {}
-#define DPAD_KEYS (keys & 0x0F)
-#define ONLY_ONE_DPAD_KEY !(DPAD_KEYS & (DPAD_KEYS - 1))
 
 enum waveform
-{ pulse_50, pulse_25, pulse_12_5, sawlike, noisy, perfect_5ths };
+{ pulse_50, pulse_25, pulse_12_5, sawlike, waver, perfect_5ths };
 
 UBYTE scale_position (UBYTE keys);
 
-void play_note (UBYTE * scale, UBYTE pos, UBYTE octave);
+void play_note (UBYTE * scale, UBYTE pos);
 void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode);
 void update_duty_cycle (void);
 
