@@ -1,5 +1,0 @@
-@numchapentry{Overview}{1}{Overview}{1}
-@numchapentry{Sample output}{2}{Sample output}{4}
-@numchapentry{Invoking @command {hello}}{3}{Invoking hello}{5}
-@numchapentry{Reporting bugs}{4}{Reporting bugs}{6}
-@unnchapentry{Concept index}{10001}{Concept index}{7}
