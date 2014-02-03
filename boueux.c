@@ -204,8 +204,7 @@ build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
 void
 update_waveform (void)
 {
-  CH1 = RESET;
-  CH2 = RESET;
+  CH1_VOL = HIGH;
   CH2_VOL = HIGH;
   
   switch (waveform)
