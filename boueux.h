@@ -6,7 +6,7 @@
 #ifndef BOUEUX_H
 #define BOUEUX_H
 
-#define BOUEUX_VERSION "0.0"
+#define BOUEUX_VERSION "0.1"
 
 #define USHORT unsigned short
 #define SCALE const UBYTE const
