@@ -11,13 +11,14 @@
 #include "music.h"
 
 UBYTE waveform = pulse_50;
-UBYTE relative_octave = 0;
 
 void
 main ()
 {
   UBYTE keys;
   UBYTE pos, old_pos = 0;
+  UBYTE note, old_note = -1;
+  UBYTE relative_octave = 0;
   UBYTE absolute_octave;
   UBYTE mode = 0;
   UBYTE root = C;
@@ -41,6 +42,10 @@ main ()
    {
     keys = joypad ();
     pos = scale_position (keys);
+     
+    note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
+      
+    if (PRESSED (B)) note += (F - C); // raise by perfect 4th (5 semitones)
     
     /* Change octave */
     if (PRESSED (START))
@@ -87,19 +92,19 @@ main ()
        continue;
      }
 
-     if (pos != old_pos)
+     if ((note != old_note) || (pos != old_pos))
      {
-      if (pos) /* Play note */
+      if (note || pos) /* Note will be played */
        {
         CH1_VOL = HIGH;
         CH2_VOL = HIGH;
         
-        play_note (scale, pos);
-          
-        font_set (small_font);
-        printf (note_names[scale[pos - 1] % OCTAVE_LEN]);
+        play_note (note);
         
-        absolute_octave = relative_octave + scale[pos - 1]/OCTAVE_LEN + 3;
+        font_set (small_font);
+        printf (note_names[note % OCTAVE_LEN]);
+        
+        absolute_octave = note/OCTAVE_LEN + 3;
         printf ("%d", absolute_octave);
         
         printf (" ");
@@ -111,9 +116,10 @@ main ()
         CH2_VOL = OFF;
         printf (". ");
        }
-      old_pos = pos;
      }
-    //delay (1);
+     
+    old_note = note;
+    old_pos = pos;
    }
 }
 
@@ -139,28 +145,26 @@ scale_position (UBYTE keys)
 }
 
 void
-play_note (UBYTE * scale, UBYTE pos)
+play_note (UBYTE note)
 {
-  UBYTE note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
   USHORT freq, freq2 = 0;
   freq = note_frequencies[note];
   
-  if (waveform == perfect_5ths)
+  switch (waveform)
    {
-    // up a perfect 5th
-    USHORT freq2 = note_frequencies[note + 7];
-    play_freq_ch1 (freq);
-    play_freq_ch2 (freq2);
-   }
-  else if (waveform == waver)
-   {
-    play_freq_ch1 (freq);
-    play_freq_ch2 (freq + 1);
-   }
-  else
-   {
-    play_freq_ch1 (freq);
-    play_freq_ch2 (freq);
+    case perfect_5ths:
+      freq2 = note_frequencies[note + (G - C)];
+      play_freq_ch1 (freq);
+      play_freq_ch2 (freq2);
+      break;
+    case waver:
+      play_freq_ch1 (freq);
+      play_freq_ch2 (freq + 1);
+      break;
+    default:
+      play_freq_ch1 (freq);
+      play_freq_ch2 (freq);
+      break;
    }
 }
 
