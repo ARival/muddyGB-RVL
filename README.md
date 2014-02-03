@@ -19,9 +19,23 @@ SELECT + LEFT selects the waveform.
 Available modes
 ---------------
 
-Ionian (Major), Aeolian (Natural minor), Harmonic minor, Blue, Dorian, Lydian
+Ionian (Major), Aeolian (Natural minor), Harmonic minor,
+Blues, Dorian, Lydian, Whole-tone
 
 (see scales.c)
+
+Available waveforms
+-------------------
+
+* Pulse waves at 50%, 25% and 12.5% duty cycle
+
+* A saw-like wave (12.5% + 25%)
+
+* "Wavering" (CH2 slightly higher frequency than CH1)
+
+* Pulse waves perfect 5ths apart
+
+(see `play_note` and `update_duty_cycle` in boueux.c)
 
 For future versions
 -------------------
@@ -29,4 +43,10 @@ For future versions
 The A button will pitch bend the note being played.
 The B button will raise the pitch by a perfect 4th.
 
-More waveforms will be available.
+Compiling from source
+--------------------
+
+There are currently no configuration options.
+With GBDK installed, run
+
+    $ make
