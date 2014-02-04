@@ -14,7 +14,7 @@ main ()
 {
   UBYTE keys;
   UBYTE pos, old_pos = 0;
-  UBYTE note, old_note = 0;
+  short note, old_note = 0;
   UBYTE relative_octave = 0;
   UBYTE absolute_octave;
   UBYTE waveform = pulse_50;
@@ -107,7 +107,11 @@ main ()
         play_note (note, waveform);
         
         font_set (small_font);
-        printf (note_names[note % OCTAVE_LEN]);
+        
+        if (note >= 0)
+          printf (note_names[note % OCTAVE_LEN]);
+        else
+          printf (note_names[note + OCTAVE_LEN]);
         
         absolute_octave = note/OCTAVE_LEN + 3;
         printf ("%d", absolute_octave);
@@ -152,10 +156,12 @@ scale_position (UBYTE keys)
 }
 
 void
-play_note (UBYTE note, UBYTE waveform)
+play_note (short note, UBYTE waveform)
 {
   USHORT freq, freq2 = 0;
-  freq = note_frequencies[note];
+  freq = note_frequencies[note + 1];
+  /* (+ 1) because B2 needs to be able to be represented, because using
+   * the A button on C3 will give B2. */
   
   switch (waveform)
    {

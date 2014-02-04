@@ -23,7 +23,7 @@ enum Waveforms
 
 UBYTE scale_position (UBYTE keys);
 
-void play_note (UBYTE note, UBYTE waveform);
+void play_note (short note, UBYTE waveform);
 void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode);
 void update_waveform (UBYTE waveform);
 void wawa_update (void);
