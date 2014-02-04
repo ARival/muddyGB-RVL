@@ -2,22 +2,26 @@ Boueux.gb
 =========
 
 Boueux.gb is a clone of MuddyGB, a music progam for the Nintendo GameBoy.
-For directions on compiling from source, see INSTALL.
+
+Latest binaries can be found
+[here](https://github.com/jackwillis/boueux/releases).
+
+To compile from source, run `make` with GBDK installed.
+There are currently no configuration options.
 
 Usage
 -----
 
-The directional pad acts to play the notes of the chosen scale.
+Usage is as in MuddyGB.
 
-The START button raises and lowers the scale by an octave.
-
-The A button lowers the pitch by a semitone.
-The B button raises the pitch by a perfect 4th.
-
-The SELECT button acts to select options.
-SELECT + RIGHT selects the current mode.
-SELECT + UP or DOWN selects the scale tonic (base note).
-SELECT + LEFT selects the waveform.
+* The directional pad acts to play the notes of the chosen scale.
+* The START button raises and lowers the scale by an octave.
+* The A button lowers the pitch by a semitone.
+* The B button raises the pitch by a perfect 4th.
+* The SELECT button acts to select options.
+  * SELECT + RIGHT selects the current mode.
+  * SELECT + UP or DOWN selects the scale tonic (base note).
+  * SELECT + LEFT selects the waveform.
 
 Available modes
 ---------------
@@ -34,7 +38,7 @@ Available waveforms
 * A saw-like wave (12.5% + 25% pulse waves)
 * "Wavering" (CH2 slightly higher frequency than CH1)
 * Pulse waves perfect 5ths apart
-* Wawa-ing pulse waves 
+* "Wawa-ing" pulse waves 
 * Echoing pulse waves
 
 (see `play_note` and `update_waveform` in boueux.c)
@@ -44,11 +48,3 @@ For future versions
 
 The A button will glide the pitch up and down a semitone like in MuddyGB,
 instead of dropping straight down.
-
-Compiling from source
---------------------
-
-There are currently no configuration options.
-With GBDK installed, run
-
-    $ make
