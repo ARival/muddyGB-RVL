@@ -101,9 +101,6 @@ main ()
      {
       if (pos) /* Note will be played */
        {
-        CH1_VOL = HIGH;
-        CH2_VOL = HIGH;
-        
         play_note (note, waveform);
         
         font_set (small_font);
@@ -162,11 +159,14 @@ play_note (short note, UBYTE waveform)
   freq = note_frequencies[note + 1];
   /* (+ 1) because B2 needs to be able to be represented, because using
    * the A button on C3 will give B2. */
+   
+  CH1_VOL = HIGH;
+  CH2_VOL = HIGH;
   
   switch (waveform)
    {
     case perfect_5ths:
-      freq2 = note_frequencies[note + (G - C)];
+      freq2 = note_frequencies[note + 1 + (G - C)];
       play_freq_ch1 (freq);
       play_freq_ch2 (freq2);
       break;
@@ -174,9 +174,16 @@ play_note (short note, UBYTE waveform)
       play_freq_ch1 (freq);
       play_freq_ch2 (freq + 1);
       break;
-    case echo:
+    case wawa:
+      freq2 = note_frequencies[note + 1 + OCTAVE_LEN]; // an octave higher
       play_freq_ch1 (freq);
-      delay (500);
+      play_freq_ch2 (freq2);
+      break;
+    case echo:
+      CH1_VOL = 0xF7;
+      CH2_VOL = 0xC7;
+      play_freq_ch1 (freq);
+      delay (100);
       play_freq_ch2 (freq);
       break;
     default:
@@ -209,6 +216,9 @@ build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode)
 void
 update_waveform (UBYTE waveform)
 {
+  CH1 = RESET;
+  CH2 = RESET;
+
   CH1_VOL = HIGH;
   CH2_VOL = HIGH;
   
@@ -252,26 +262,31 @@ update_waveform (UBYTE waveform)
     case echo:
      puts ("\n;; waveform echo");
      SET_PULSE_WIDTH (CH1, 50);
-     SET_PULSE_WIDTH (CH2, 50);
-     
-     CH2_VOL = 0x88;
+     SET_PULSE_WIDTH (CH2, 25);
      break;
    }
 }
 
 void
 wawa_update (void)
-{
-  switch ((clock () % 60) / 20)
+{CH2_VOL = 0x4F;
+  switch ((clock () % 12) / 3)
    {
     case 0:
-      SET_PULSE_WIDTH (CH2, 12_5);
-      break;
-    case 1:
+      SET_PULSE_WIDTH (CH1, 12_5);
       SET_PULSE_WIDTH (CH2, 25);
       break;
-    case 2:
+    case 1:
+      SET_PULSE_WIDTH (CH1, 25);
       SET_PULSE_WIDTH (CH2, 50);
+      break;
+    case 2:
+      SET_PULSE_WIDTH (CH1, 50);
+      SET_PULSE_WIDTH (CH2, 25);
+      break;
+    case 3:
+      SET_PULSE_WIDTH (CH1, 25);
+      SET_PULSE_WIDTH (CH2, 12_5);
       break;
    }
 }
