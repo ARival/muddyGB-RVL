@@ -1,10 +1,10 @@
-Boueux.gb
+MuddyGB_DSD.gb
 =========
 
-Boueux.gb is a clone of MuddyGB, a music progam for the Nintendo GameBoy.
+MuddyGB_DSD.gb is a clone of MuddyGB, a music progam for the Nintendo GameBoy.
 
 Latest binaries can be found
-[here](https://github.com/jackwillis/boueux/releases).
+[here](https://github.com/LokkoLori/muddyGB-DSD/releases).
 
 To compile from source, run `make` with GBDK installed.
 There are currently no configuration options.

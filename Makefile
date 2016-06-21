@@ -1,12 +1,12 @@
 CC = lcc
 
-MODULES = sound music boueux
+MODULES = sound music muddygb_dsd
 OBJECTS = $(addsuffix .o, $(MODULES))
 
-all: boueux.gb
-	@echo Boueux.gb has been compiled
+all: muddygb_dsd.gb
+	@echo MuddyGB_DSD.gb has been compiled
 
-boueux.gb: $(OBJECTS)
+muddygb_dsd.gb: $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@
 
 %.o: %.c %.h

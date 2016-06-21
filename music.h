@@ -1,7 +1,7 @@
 /* music.h -- music theory
  */
 
-#include "boueux.h"
+#include "muddygb_dsd.h"
 #include "sound.h"
 
 #ifndef MUSIC_H
