@@ -6,10 +6,11 @@
 #ifndef BOUEUX_H
 #define BOUEUX_H
 
-#define BOUEUX_VERSION "0.1"
+#define MUDDYGBDSD_VERSION "0.1a"
 
-#define USHORT unsigned short
-#define SCALE const UBYTE const
+#define USHORT unsigned int
+#define UBYTE unsigned char
+#define SCALE UBYTE
 
 #define NUM_MODES 6
 #define OCTAVE_LEN 12

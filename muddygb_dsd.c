@@ -15,8 +15,8 @@ main ()
   UBYTE keys;
   UBYTE pos, old_pos = 0;
   short note, old_note = 0;
-  UBYTE relative_octave = 0;
-  UBYTE absolute_octave;
+  USHORT relative_octave = 0;
+  USHORT absolute_octave;
   UBYTE waveform = pulse_50;
   UBYTE mode = 0;
   UBYTE root = C;
@@ -28,7 +28,7 @@ main ()
   small_font = font_load (font_spect);
   font_set (big_font);
  
-  printf (";; Boueux v%s\n", BOUEUX_VERSION);
+  printf (";; MuddyGB-DSD v%s\n", MUDDYGBDSD_VERSION);
  
   INIT_SOUND;
   MASTER_VOLUME = OFF;
