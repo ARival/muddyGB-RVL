@@ -12,7 +12,7 @@
 #define UBYTE unsigned char
 #define SCALE UBYTE
 
-#define NUM_MODES 6
+#define NUM_MODES 7
 #define OCTAVE_LEN 12
 
 #define PRESSED(KEY) (keys & J_## KEY)

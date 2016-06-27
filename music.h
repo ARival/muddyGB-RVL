@@ -10,8 +10,8 @@
 enum note
 { C, Cs, D, Ds, E, F, Fs, G, Gs, A, As, B, C2, Cs2, D2, Ds2 };
 
-const char *note_names[] = {
-  "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+const char* note_names[] = {
+  " C", "#C", " D", "#D", " E", " F", "#F", " G", "#G", " A", "#A", " B"
 };
 
 extern SCALE ionian[];

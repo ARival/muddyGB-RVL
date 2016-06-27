@@ -13,7 +13,7 @@ void main() {
 
     UBYTE keys;
     UBYTE pos, old_pos = 0;
-    USHORT note, old_note = 0;
+    int note, old_note = 0;
     USHORT relative_octave = 0;
     USHORT absolute_octave;
     UBYTE waveform = pulse_50;
@@ -113,7 +113,6 @@ void main() {
                 /* Stop note */
                 CH1_VOL = OFF;
                 CH2_VOL = OFF;
-                printf (". ");
             }
         }
 
