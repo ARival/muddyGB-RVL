@@ -36,9 +36,11 @@
 
 #define SET_PULSE_WIDTH(CH, DUTY) (CH## _DUTY_CYCLE) = (PULSE_WIDTH_## DUTY);
 
-extern const USHORT note_frequencies[];
+UINT getFrequencies(int note, int bend);
 
-void play_freq_ch1 (USHORT f);
-void play_freq_ch2 (USHORT f);
+extern const UINT note_frequencies[];
+
+void play_freq_ch1 (UINT f, short bend);
+void play_freq_ch2 (UINT f, short bend);
 
 #endif

@@ -14,8 +14,8 @@ void main() {
     UBYTE keys;
     UBYTE pos, old_pos = 0;
     int note, old_note = 0;
-    USHORT relative_octave = 0;
-    USHORT absolute_octave;
+    UINT relative_octave = 0;
+    UINT absolute_octave;
     UBYTE waveform = pulse_50;
     UBYTE mode = 0;
     UBYTE root = C;
@@ -143,39 +143,43 @@ UBYTE scale_position (UBYTE keys) {
 }
 
 void play_note (short note, UBYTE waveform) {
-    USHORT freq, freq2 = 0;
-    freq = note_frequencies[note + 1];
+    UINT freq, freq2 = 0;
+    short bend = 0;
+    freq = getFrequencies(note, bend);
     /* (+ 1) because B2 needs to be able to be represented, because using
     * the A button on C3 will give B2. */
 
     CH1_VOL = HIGH;
-    CH2_VOL = HIGH;
 
     switch (waveform) {
         case perfect_5ths:
-            freq2 = note_frequencies[note + 1 + (G - C)];
-            play_freq_ch1 (freq);
-            play_freq_ch2 (freq2);
+            freq2 = getFrequencies(note + (G - C), bend);
+            play_freq_ch1 (freq, bend);
+            CH2_VOL = HIGH;
+            play_freq_ch2 (freq2, bend);
             break;
         case waver:
-            play_freq_ch1 (freq);
-            play_freq_ch2 (freq + 1);
+            play_freq_ch1 (freq, bend);
+            play_freq_ch2 (freq + 1, bend);
             break;
         case wawa:
-            freq2 = note_frequencies[note + 1 + OCTAVE_LEN]; // an octave higher
-            play_freq_ch1 (freq);
-            play_freq_ch2 (freq2);
+            freq2 = getFrequencies(note + OCTAVE_LEN); // an octave higher
+            play_freq_ch1 (freq, bend);
+            CH2_VOL = HIGH;
+            play_freq_ch2 (freq2, bend);
             break;
         case echo:
             CH1_VOL = 0xF7;
             CH2_VOL = 0xC7;
-            play_freq_ch1 (freq);
+            play_freq_ch1 (freq, bend);
+            CH2_VOL = HIGH;
             delay (100);
-            play_freq_ch2 (freq);
+            play_freq_ch2 (freq, bend);
             break;
         default:
-            play_freq_ch1 (freq);
-            play_freq_ch2 (freq);
+            play_freq_ch1 (freq, bend);
+            CH2_VOL = OFF;
+            //play_freq_ch2 (freq, bend);
             break;
     }
 }

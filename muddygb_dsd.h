@@ -8,7 +8,7 @@
 
 #define MUDDYGBDSD_VERSION "0.1a"
 
-#define USHORT unsigned int
+#define UINT unsigned int
 #define UBYTE unsigned char
 #define SCALE UBYTE
 

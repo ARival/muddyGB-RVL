@@ -7,7 +7,7 @@ def createFreqTable(fn):
     quant = 12
     scalen = quant*12
     step = math.pow(2.0, 1.0/scalen)
-    for oc in range(0, 6):
+    for oc in range(0, 5):
         afreq = bfreq
         for sc in range(0, scalen):
             freqs.append(afreq)
@@ -15,7 +15,10 @@ def createFreqTable(fn):
         bfreq *= 2
 
     with open(fn, 'w') as f:
-        f.write("const USHORT note_frequencies[] = {\n")
+        f.write("#define QUANT_NOTE_OFFSET -4\n")
+        f.write("#define QUANT_DETAIL %d\n" % quant)
+        f.write("#define QAUNT_TABLE_LEN %d\n\n" % len(freqs))
+        f.write("const UINT quant_frequencies[] = {\n")
         row = ''
         c = 0
         for freq in freqs:
