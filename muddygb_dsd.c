@@ -21,6 +21,10 @@ void main() {
     UBYTE root = C;
     SCALE scale[8];
 
+    int bend = 0;
+    int bendcount = 0;
+    int bendwait = 12;
+
     font_t big_font, small_font;
     font_init ();
     big_font = font_load (font_ibm);
@@ -47,10 +51,25 @@ void main() {
         if (pos) {
             note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
 
-            /* Raise by perfect 4th */
-            if (PRESSED (B)) note += 5; /* a perfect fourth = 5 semitones */
             /* Lower by semitone */
             if (PRESSED (A)) note -= 1;
+
+            if (PRESSED (B)){
+                // bend up
+                bendcount++;
+                if (bendcount == bendwait){
+                    bendcount = 0;
+                    if (bend < 24){
+                        bend++;
+                        play_note(note, waveform, bend);
+                    }
+                }
+            } else if (bend != 0){
+                bend = 0;
+                bendcount = 0;
+                //todo ease bending
+                play_note(note, waveform, bend);
+            }
         }
 
         /* Change octave */
@@ -142,9 +161,8 @@ UBYTE scale_position (UBYTE keys) {
     return 0;
 }
 
-void play_note (short note, UBYTE waveform) {
+void play_note (short note, UBYTE waveform, int bend) {
     UINT freq, freq2 = 0;
-    short bend = 0;
     freq = getFrequencies(note, bend);
     /* (+ 1) because B2 needs to be able to be represented, because using
     * the A button on C3 will give B2. */

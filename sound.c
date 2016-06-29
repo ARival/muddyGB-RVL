@@ -3,7 +3,7 @@
 
 #include "sound.h"
 #include "freqtable.c"
-//#include <stdio.h>
+#include <stdio.h>
 
 /* These frequencies are calculated like 2^11 - (2^17 / FrequencyInHertz).
  * So 2048 represents 2^17 Hz (highest freq.) and 0 represents 64 Hz (lowest).
