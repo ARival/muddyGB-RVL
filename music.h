@@ -14,12 +14,8 @@ const char* note_names[] = {
   " C", "#C", " D", "#D", " E", " F", "#F", " G", "#G", " A", "#A", " B"
 };
 
-extern SCALE ionian[];
-extern SCALE aeolian[];
-extern SCALE harmonic[];
-extern SCALE dorian[];
-extern SCALE lydian[];
-extern SCALE wholetone[];
+extern SCALE major[];
+extern SCALE minor[];
 extern SCALE blues[];
 
 void build_scale (UBYTE * scale, UBYTE tonic, SCALE * scale_type);

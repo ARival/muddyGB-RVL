@@ -53,7 +53,7 @@ void main() {
             note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
 
             /* Lower by semitone */
-            if (PRESSED (A)) note -= 1;
+            if (PRESSED (A) && !PRESSED (B)) note -= 1;
 
             if (PRESSED (B)){
                 // bend up
@@ -61,7 +61,10 @@ void main() {
                     bendcount++;
                     if (bendcount == bendwait){
                         bendcount = 0;
-                        if (bend < 24){
+                        if (PRESSED (A) && 12 < bend) {
+                            bend--;
+                            play_note(note, waveform, bend);
+                        } else if (bend < 24){
                             bend++;
                             play_note(note, waveform, bend);
                         }
@@ -123,36 +126,34 @@ void main() {
         }
 
         if ((note != old_note) || (pos != old_pos)) {
-            if (pos){
+            if (pos) {
                 /* Note will be played */
                 bend = 0;
                 bendcount = 0;
-                if PRESSED (B){
+                if PRESSED (B) {
                     dontbend = 1;
                 }
 
-                play_note (note, waveform, bend);
+                play_note(note, waveform, bend);
 
-                font_set (small_font);
+                font_set(small_font);
 
                 if (note >= 0)
-                    printf (note_names[note % OCTAVE_LEN]);
+                    printf(note_names[note % OCTAVE_LEN]);
                 else
-                    printf (note_names[note + OCTAVE_LEN]);
+                    printf(note_names[note + OCTAVE_LEN]);
 
-                absolute_octave = note/OCTAVE_LEN + 3;
-                printf ("%d", absolute_octave);
+                absolute_octave = note / OCTAVE_LEN + 3;
+                printf("%d", absolute_octave);
 
-                printf (" ");
-                font_set (big_font);
+                printf(" ");
+                font_set(big_font);
             } else {
                 /* Stop note */
                 CH1_VOL = OFF;
                 CH2_VOL = OFF;
             }
         }
-
-        if (waveform == wawa) wawa_update();
 
         old_note = note;
         old_pos = pos;
@@ -195,21 +196,8 @@ void play_note (short note, UBYTE waveform, int bend) {
             break;
         case waver:
             play_freq_ch1 (freq, bend);
+            CH2_VOL = HIGH;
             play_freq_ch2 (freq + 1, bend);
-            break;
-        case wawa:
-            freq2 = getFrequencies(note + OCTAVE_LEN); // an octave higher
-            play_freq_ch1 (freq, bend);
-            CH2_VOL = HIGH;
-            play_freq_ch2 (freq2, bend);
-            break;
-        case echo:
-            CH1_VOL = 0xF7;
-            CH2_VOL = 0xC7;
-            play_freq_ch1 (freq, bend);
-            CH2_VOL = HIGH;
-            delay (100);
-            play_freq_ch2 (freq, bend);
             break;
         default:
             play_freq_ch1 (freq, bend);
@@ -227,22 +215,15 @@ void play_note (short note, UBYTE waveform, int bend) {
 
 void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode) {
     switch (mode) {
-        case 0: BUILD (ionian);
-        case 1: BUILD (aeolian);
-        case 2: BUILD (harmonic);
-        case 3: BUILD (dorian);
-        case 4: BUILD (lydian);
-        case 5: BUILD (wholetone);
-        case 6: BUILD (blues);
+        case 0: BUILD (major);
+        case 1: BUILD (minor);
+        case 2: BUILD (blues);
     }
 }
 
 void update_waveform (UBYTE waveform) {
     CH1 = RESET;
     CH2 = RESET;
-
-    CH1_VOL = HIGH;
-    CH2_VOL = HIGH;
 
     switch (waveform) {
         case pulse_50:
@@ -274,38 +255,6 @@ void update_waveform (UBYTE waveform) {
             puts ("\n;; waveform 5ths");
             SET_PULSE_WIDTH (CH1, 50);
             SET_PULSE_WIDTH (CH2, 50);
-            break;
-        case wawa:
-            puts ("\n;; waveform wawa");
-            SET_PULSE_WIDTH (CH1, 50);
-            SET_PULSE_WIDTH (CH2, 12_5);
-            break;
-        case echo:
-            puts ("\n;; waveform echo");
-            SET_PULSE_WIDTH (CH1, 50);
-            SET_PULSE_WIDTH (CH2, 25);
-            break;
-    }
-}
-
-void wawa_update (void) {
-    CH2_VOL = 0x4F;
-    switch ((clock () % 12) / 3) {
-        case 0:
-            SET_PULSE_WIDTH (CH1, 12_5);
-            SET_PULSE_WIDTH (CH2, 25);
-            break;
-        case 1:
-            SET_PULSE_WIDTH (CH1, 25);
-            SET_PULSE_WIDTH (CH2, 50);
-            break;
-        case 2:
-            SET_PULSE_WIDTH (CH1, 50);
-            SET_PULSE_WIDTH (CH2, 25);
-            break;
-        case 3:
-            SET_PULSE_WIDTH (CH1, 25);
-            SET_PULSE_WIDTH (CH2, 12_5);
             break;
     }
 }
