@@ -24,6 +24,7 @@ void main() {
     int bend = 0;
     int bendcount = 0;
     int bendwait = 12;
+    int dontbend = 0;
 
     font_t big_font, small_font;
     font_init ();
@@ -56,20 +57,30 @@ void main() {
 
             if (PRESSED (B)){
                 // bend up
-                bendcount++;
-                if (bendcount == bendwait){
-                    bendcount = 0;
-                    if (bend < 24){
-                        bend++;
+                if (!dontbend){
+                    bendcount++;
+                    if (bendcount == bendwait){
+                        bendcount = 0;
+                        if (bend < 24){
+                            bend++;
+                            play_note(note, waveform, bend);
+                        }
+                    }
+                }
+            } else {
+                dontbend = 0;
+                if (bend != 0) {
+                    bendcount++;
+                    if (bendcount == bendwait) {
+                        bendcount = 0;
+                        bend--;
                         play_note(note, waveform, bend);
                     }
                 }
-            } else if (bend != 0){
-                bend = 0;
-                bendcount = 0;
-                //todo ease bending
-                play_note(note, waveform, bend);
             }
+        } else {
+            bend = 0;
+            bendcount = 0;
         }
 
         /* Change octave */
@@ -114,7 +125,13 @@ void main() {
         if ((note != old_note) || (pos != old_pos)) {
             if (pos){
                 /* Note will be played */
-                play_note (note, waveform);
+                bend = 0;
+                bendcount = 0;
+                if PRESSED (B){
+                    dontbend = 1;
+                }
+
+                play_note (note, waveform, bend);
 
                 font_set (small_font);
 
