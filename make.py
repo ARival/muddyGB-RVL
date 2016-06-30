@@ -7,7 +7,7 @@ def createFreqTable(fn):
     quant = 12
     scalen = quant*12
     step = math.pow(2.0, 1.0/scalen)
-    for oc in range(0, 5):
+    for oc in range(0, 6):
         afreq = bfreq
         for sc in range(0, scalen):
             freqs.append(afreq)
@@ -22,7 +22,10 @@ def createFreqTable(fn):
         row = ''
         c = 0
         for freq in freqs:
-            row += str(int(2**11 - (2**17/freq)))+', '
+            fint = int(2**11 - (2**17/freq))
+            if fint < 0:
+                fint = 0
+            row += str(fint)+', '
             c += 1
             if c == quant:
                 c = 0

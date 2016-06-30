@@ -14,12 +14,16 @@ void main() {
     UBYTE keys;
     UBYTE pos, old_pos = 0;
     int note, old_note = 0;
-    UINT relative_octave = 0;
+    int octave_min = 0;
+    int octave_max = 3;
+    int relative_octave = 0;
     UINT absolute_octave;
     UBYTE waveform = pulse_50;
     UBYTE mode = 0;
     UBYTE root = C;
     SCALE scale[8];
+    int start_pressed = 0;
+    int select_pressed = 0;
 
     int bend = 0;
     int bendcount = 0;
@@ -87,13 +91,8 @@ void main() {
         }
 
         /* Change octave */
-        if (PRESSED (START)){
-            relative_octave = !relative_octave;
-            printf ("\n;; rel octave +%d\n", relative_octave);
-            WAIT_KEY_UP (START);
-        }
 
-        if (PRESSED (SELECT)) {
+        if (PRESSED (SELECT) && PRESSED(START)) {
             /* Change mode */
             if (PRESSED (RIGHT)) {
                 mode = (mode + 1) % NUM_MODES;
@@ -123,6 +122,24 @@ void main() {
             }
 
             continue;
+
+        } else if (PRESSED (START) && !start_pressed){
+            if (relative_octave < octave_max){
+                relative_octave++;
+            }
+            start_pressed = 1;
+            //printf ("\n;; rel octave +%d\n", relative_octave);
+        } else if (PRESSED (SELECT) && !select_pressed){
+            if (octave_min < relative_octave){
+                relative_octave--;
+            }
+            select_pressed = 1;
+            //printf ("\n;; rel octave +%d\n", relative_octave);
+        } else {
+            if (!PRESSED(START))
+                start_pressed = 0;
+            if (!PRESSED(SELECT))
+                select_pressed = 0;
         }
 
         if ((note != old_note) || (pos != old_pos)) {
