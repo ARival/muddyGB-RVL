@@ -57,15 +57,15 @@ void main() {
             note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
 
             /* Lower by semitone */
-            if (PRESSED (A) && !PRESSED (B)) note -= 1;
+            if (PRESSED (B) && !PRESSED (A)) note -= 1;
 
-            if (PRESSED (B)){
+            if (PRESSED (A)){
                 // bend up
                 if (!dontbend){
                     bendcount++;
                     if (bendcount == bendwait){
                         bendcount = 0;
-                        if (PRESSED (A) && 12 < bend) {
+                        if (PRESSED (B) && 12 < bend) {
                             bend--;
                             play_note(note, waveform, bend);
                         } else if (bend < 24){
@@ -147,7 +147,7 @@ void main() {
                 /* Note will be played */
                 bend = 0;
                 bendcount = 0;
-                if PRESSED (B) {
+                if PRESSED (A) {
                     dontbend = 1;
                 }
 

@@ -16,18 +16,19 @@ Usage is as in MuddyGB.
 
 * The directional pad acts to play the notes of the chosen scale.
 * The START button raises and lowers the scale by an octave.
-* The A button lowers the pitch by a semitone.
-* The B button raises the pitch by a perfect 4th.
-* The SELECT button acts to select options.
-  * SELECT + RIGHT selects the current mode.
-  * SELECT + UP or DOWN selects the scale tonic (base note).
-  * SELECT + LEFT selects the waveform.
+* The A button bent up the pitch by a full tone.
+* The B button drop down the pitch by a semitone.
+* The START button raise the pitch by an octave
+* The SELECT button lower the pitch by an octave
+* while SELECT + START pressed got the options mode
+  * + RIGHT selects the current mode.
+  * + UP or DOWN selects the scale tonic (base note).
+  * + LEFT selects the waveform.
 
 Available modes
 ---------------
 
-Ionian (Major), Aeolian (Natural minor), Harmonic minor,
-Blues, Dorian, Lydian, Whole-tone
+major, minor, Blues
 
 (see scales.c)
 
@@ -38,13 +39,10 @@ Available waveforms
 * A saw-like wave (12.5% + 25% pulse waves)
 * "Wavering" (CH2 slightly higher frequency than CH1)
 * Pulse waves perfect 5ths apart
-* "Wawa-ing" pulse waves 
-* Echoing pulse waves
 
 (see `play_note` and `update_waveform` in boueux.c)
 
 For future versions
 -------------------
 
-The A button will glide the pitch up and down a semitone like in MuddyGB,
-instead of dropping straight down.
+experimenting with various waveforms
