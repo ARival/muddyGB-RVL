@@ -6,7 +6,7 @@
 #ifndef BOUEUX_H
 #define BOUEUX_H
 
-#define MUDDYGBDSD_VERSION "0.1b"
+#define MUDDYGBDSD_VERSION "0.1"
 
 #define UINT unsigned int
 #define UBYTE unsigned char
