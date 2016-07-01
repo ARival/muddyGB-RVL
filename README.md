@@ -40,9 +40,16 @@ Available waveforms
 * "Wavering" (CH2 slightly higher frequency than CH1)
 * Pulse waves perfect 5ths apart
 
-(see `play_note` and `update_waveform` in boueux.c)
+(see `play_note` and `update_waveform` in muddygb_dsd.c)
 
 For future versions
 -------------------
 
-experimenting with various waveforms
+minestones for v1.0:
+
+* add options menu
+  * enter by pressing key combination
+  * change the Tonic direction (shift the scale)
+  * save settings feature
+
+* experimenting with various waveforms
