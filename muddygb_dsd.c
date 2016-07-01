@@ -18,7 +18,7 @@ void main() {
     int octave_max = 3;
     int relative_octave = 0;
     UINT absolute_octave;
-    UBYTE waveform = pulse_50;
+    UBYTE waveform = square;
     UBYTE mode = 0;
     UBYTE root = C;
     SCALE scale[8];
@@ -29,6 +29,11 @@ void main() {
     int bendcount = 0;
     int bendwait = 12;
     int dontbend = 0;
+
+    int pulseinit = 0;
+    int pulsecount = 0;
+    int pulsewait = 24;
+    int pulsephase = 0;
 
     font_t big_font, small_font;
     font_init ();
@@ -150,6 +155,7 @@ void main() {
                 if PRESSED (A) {
                     dontbend = 1;
                 }
+                pulseinit = 0;
 
                 play_note(note, waveform, bend);
 
@@ -174,7 +180,48 @@ void main() {
 
         old_note = note;
         old_pos = pos;
+
+        if (waveform == pulsemod){
+            //update pulsemod
+            // this is draft code for testing ... implement it more efficient
+            if (!pulseinit){
+                pulseinit = 1;
+                pulsecount = 0;
+                pulsephase = 0;
+            }
+            pulsecount++;
+            if (pulsecount == pulsewait){
+                pulsecount = 0;
+                pulsephase++;
+                if (5 < pulsephase){
+                    pulsephase = 0;
+                }
+                switch (pulsephase) {
+                    case 0:
+                        SET_PULSE_WIDTH (CH1, 12_5);
+                        break;
+                    case 1:
+                        SET_PULSE_WIDTH (CH1, 25);
+                        break;
+                    case 2:
+                        SET_PULSE_WIDTH (CH1, 50);
+                        break;
+                    case 3:
+                        SET_PULSE_WIDTH (CH1, 75);
+                        break;
+                    case 4:
+                        SET_PULSE_WIDTH (CH1, 50);
+                        break;
+                    case 5:
+                        SET_PULSE_WIDTH (CH1, 25);
+                        break;
+                }
+            }
+        } else {
+            pulseinit = 0;
+        }
     }
+
 }
 
 UBYTE scale_position (UBYTE keys) {
@@ -214,7 +261,8 @@ void play_note (short note, UBYTE waveform, int bend) {
         case waver:
             play_freq_ch1 (freq, bend);
             CH2_VOL = HIGH;
-            play_freq_ch2 (freq + 1, bend);
+            freq2 = getFrequencies(note, bend+2);
+            play_freq_ch2 (freq2, bend);
             break;
         default:
             play_freq_ch1 (freq, bend);
@@ -243,35 +291,25 @@ void update_waveform (UBYTE waveform) {
     CH2 = RESET;
 
     switch (waveform) {
-        case pulse_50:
-            puts ("\n;; waveform 50%");
+        case square:
+            puts ("\n;; waveform square");
             SET_PULSE_WIDTH (CH1, 50);
-            SET_PULSE_WIDTH (CH2, 50);
-            break;
-        case pulse_25:
-            puts ("\n;; waveform 25%");
-            SET_PULSE_WIDTH (CH1, 25);
-            SET_PULSE_WIDTH (CH2, 25);
-            break;
-        case pulse_12_5:
-            puts ("\n;; waveform 12.5%");
-            SET_PULSE_WIDTH (CH1, 12_5);
-            SET_PULSE_WIDTH (CH2, 12_5);
-            break;
-        case sawlike:
-            puts ("\n;; waveform sawlike");
-            SET_PULSE_WIDTH (CH1, 50);
-            SET_PULSE_WIDTH (CH2, 12_5);
+            //SET_PULSE_WIDTH (CH2, 50);
             break;
         case waver:
             puts ("\n;; waveform waver");
-            SET_PULSE_WIDTH (CH1, 12_5);
-            SET_PULSE_WIDTH (CH2, 25);
+            SET_PULSE_WIDTH (CH1, 50);
+            SET_PULSE_WIDTH (CH2, 50);
             break;
         case perfect_5ths:
             puts ("\n;; waveform 5ths");
             SET_PULSE_WIDTH (CH1, 50);
             SET_PULSE_WIDTH (CH2, 50);
+            break;
+        case pulsemod:
+            puts ("\n;; waveform pulsemod");
+            SET_PULSE_WIDTH (CH1, 12_5);
+            //SET_PULSE_WIDTH (CH2, 12_5);
             break;
     }
 }
