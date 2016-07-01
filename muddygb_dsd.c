@@ -41,7 +41,7 @@ void main() {
     small_font = font_load (font_spect);
     font_set (big_font);
  
-    printf (";; MuddyGB-DSD v%s\n", MUDDYGBDSD_VERSION);
+    printf (" MuddyGB-DSD v%s\n", MUDDYGBDSD_VERSION);
 
     INIT_SOUND;
     MASTER_VOLUME = OFF;
