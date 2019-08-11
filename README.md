@@ -3,7 +3,7 @@ MuddyGB_RVL.gb
 
 MuddyGB_RVL.gb is a fork of MuddyGB_DSD, which is itself a clone of MuddyGB a music progam for the Nintendo GameBoy.
 
-This fork will focus 
+This fork will focus on extending MuddyGB to be a robust live instrument for chiptune performers.
 
 Latest binaries can be found
 [here](https://github.com/ARival/muddyGB-RVL/releases).
@@ -54,4 +54,4 @@ minestones for v1.0:
 
 * fix waveform selection
 * add echo mode to pulse wave
-* add selectable envelopes
+* add selectable envelopes (volume, pitch and pulse width)
