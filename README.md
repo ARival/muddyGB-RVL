@@ -1,10 +1,12 @@
-MuddyGB_DSD.gb
+MuddyGB_RVL.gb
 =========
 
-MuddyGB_DSD.gb is a clone of MuddyGB, a music progam for the Nintendo GameBoy.
+MuddyGB_RVL.gb is a fork of MuddyGB_DSD, which is itself a clone of MuddyGB a music progam for the Nintendo GameBoy.
+
+This fork will focus 
 
 Latest binaries can be found
-[here](https://github.com/LokkoLori/muddyGB-DSD/releases).
+[here](https://github.com/ARival/muddyGB-RVL/releases).
 
 To compile from source, run `make` with GBDK installed.
 There are currently no configuration options.
@@ -12,12 +14,12 @@ There are currently no configuration options.
 Usage
 -----
 
-Usage is as in MuddyGB.
+Usage is similar to muddyGB, but with some big changes planned.
 
 * The directional pad acts to play the notes of the chosen scale.
 * The START button raises and lowers the scale by an octave.
-* The A button bent up the pitch by a full tone.
-* The B button drop down the pitch by a semitone.
+* The A button enables portamento between notes *BUGGY*
+* The B button performs a fixed vibrato
 * The START button raise the pitch by an octave
 * The SELECT button lower the pitch by an octave
 * while SELECT + START pressed got the options mode
@@ -47,9 +49,9 @@ For future versions
 
 minestones for v1.0:
 
-* add options menu
+* add graphical options menu
   * enter by pressing key combination
-  * change the Tonic direction (shift the scale)
-  * save settings feature
 
-* experimenting with various waveforms
+* fix waveform selection
+* add echo mode to pulse wave
+* add selectable envelopes
