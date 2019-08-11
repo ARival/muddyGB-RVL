@@ -25,10 +25,32 @@ void main() {
     int start_pressed = 0;
     int select_pressed = 0;
 
+
     int bend = 0;
     int bendcount = 0;
-    int bendwait = 12;
+    int bendwait = 6;
     int dontbend = 0;
+
+    // For note bending
+    int targetNote = -1;
+    int isPortamento = 0;
+
+    int vibOn = 0;
+    int vibamt = 0;
+    int vibIndex = 0;
+    int vibCount = 0;
+    int vibWait = 24;
+    //int dontbend = 0;
+    const int vibratoValues[] = {
+       -1,-3,-7,-3,-1,1,3,7,3,1,0
+    };
+
+    /* 
+    const int vibratoValues[] = {
+       -1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11
+    };
+    */
+    const int vibratoValueLength = 11;
 
     int pulseinit = 0;
     int pulsecount = 0;
@@ -62,20 +84,63 @@ void main() {
             note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
 
             /* Lower by semitone */
-            if (PRESSED (B) && !PRESSED (A)) note -= 1;
+            //if (PRESSED (B) && !PRESSED (A)) note -= 1;
+            if (PRESSED (B) ) {
+                vibOn = 1;
+                vibCount++;
+                if (vibCount >= vibWait) {
+                    vibCount = 0;
+                    vibamt = vibratoValues[vibIndex];
+                    vibIndex++;
+                    if (vibIndex >= vibratoValueLength) {
+                        vibIndex = 0;
+                    }
+                    play_note(note, waveform, vibamt, 0);
+                }
 
+            } else if (vibOn == 1){
+                // reset indexes
+                vibOn = 0;
+                vibCount = 0;
+                vibIndex = 0;
+                vibamt = 0;
+                play_note(note, waveform, vibamt, 0);
+            }
+
+            if (PRESSED (A)){
+                isPortamento = 1;
+                //if (bendcount == bendwait){
+                if (targetNote > 0) {
+                    if (bend < targetNote*12){
+                        bend++;
+                        play_note(note, waveform, bend, 0);
+                        printf("%d\n", targetNote);
+                    }
+                } else if (targetNote < 0) {
+                    if (bend > targetNote*12){
+                        bend--;
+                        play_note(note, waveform, bend, 0);
+                        printf("%d\n", targetNote);
+                    }
+                }
+
+               // }
+                //bendcount++;
+
+            } else {
+                isPortamento = 0;
+                bend = 0;
+            }
+            /* 
             if (PRESSED (A)){
                 // bend up
                 if (!dontbend){
                     bendcount++;
                     if (bendcount == bendwait){
                         bendcount = 0;
-                        if (PRESSED (B) && 12 < bend) {
-                            bend--;
-                            play_note(note, waveform, bend);
-                        } else if (bend < 24){
+                        if (bend < 24){
                             bend++;
-                            play_note(note, waveform, bend);
+                            play_note(note, waveform, bend, 0);
                         }
                     }
                 }
@@ -86,10 +151,11 @@ void main() {
                     if (bendcount == bendwait) {
                         bendcount = 0;
                         bend--;
-                        play_note(note, waveform, bend);
+                        play_note(note, waveform, bend, 0);
                     }
                 }
             }
+            */
         } else {
             bend = 0;
             bendcount = 0;
@@ -147,17 +213,27 @@ void main() {
                 select_pressed = 0;
         }
 
-        if ((note != old_note) || (pos != old_pos)) {
+        if ((pos != old_pos)) {
             if (pos) {
-                /* Note will be played */
-                bend = 0;
-                bendcount = 0;
-                if PRESSED (A) {
-                    dontbend = 1;
-                }
-                pulseinit = 0;
+                if (isPortamento){
+                    
+                    //targetNote = old_note - note;
+                    targetNote = note - old_note;
 
-                play_note(note, waveform, bend);
+                } else {
+                    /* Note will be played */
+                    bend = 0;
+                    bendcount = 0;
+                    if PRESSED (A) {
+                        dontbend = 1;
+                    }
+                    pulseinit = 0;
+                    targetNote = 0;
+
+                    play_note(note, waveform, bend, 1);
+
+                }
+                old_note = note;
 
                 font_set(small_font);
 
@@ -175,6 +251,7 @@ void main() {
                 /* Stop note */
                 CH1_VOL = OFF;
                 CH2_VOL = OFF;
+                targetNote = 0;
             }
         }
 
@@ -220,8 +297,9 @@ void main() {
         } else {
             pulseinit = 0;
         }
+        oldPad = joypad();
+        // wait_vbl_done();
     }
-
 }
 
 UBYTE scale_position (UBYTE keys) {
@@ -243,30 +321,35 @@ UBYTE scale_position (UBYTE keys) {
     return 0;
 }
 
-void play_note (short note, UBYTE waveform, int bend) {
+void play_note (short note, UBYTE waveform, short bend, int newNote ) {
     UINT freq, freq2 = 0;
     freq = getFrequencies(note, bend);
     /* (+ 1) because B2 needs to be able to be represented, because using
     * the A button on C3 will give B2. */
 
-    CH1_VOL = HIGH;
+    if (newNote)
+        CH1_VOL = HIGH;
 
     switch (waveform) {
         case perfect_5ths:
             freq2 = getFrequencies(note + (G - C), bend);
-            play_freq_ch1 (freq, bend);
-            CH2_VOL = HIGH;
-            play_freq_ch2 (freq2, bend);
+            play_freq_ch1 (freq, newNote);
+            if (newNote) CH2_VOL = HIGH;
+            play_freq_ch2 (freq2, newNote);
             break;
         case waver:
-            play_freq_ch1 (freq, bend);
-            CH2_VOL = HIGH;
+            play_freq_ch1 (freq, newNote);
+            if (newNote) CH2_VOL = HIGH;
             freq2 = getFrequencies(note, bend+2);
-            play_freq_ch2 (freq2, bend);
+            play_freq_ch2 (freq2, newNote);
             break;
+        case echo:
+            play_freq_ch2 (freq, newNote);
+            break;
+
         default:
-            play_freq_ch1 (freq, bend);
-            CH2_VOL = OFF;
+            play_freq_ch1 (freq, newNote);
+            //CH2_VOL = OFF;
             //play_freq_ch2 (freq, bend);
             break;
     }
@@ -312,4 +395,8 @@ void update_waveform (UBYTE waveform) {
             //SET_PULSE_WIDTH (CH2, 12_5);
             break;
     }
+}
+
+UINT8 just_pressed () {
+    return oldPad && joypad();
 }

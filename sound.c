@@ -32,21 +32,23 @@ UINT getFrequencies(int note, int bend){
 /* Play frequency to channel 1 and 2.
  * Frequencies are in non-hertz values.
  */
-
-void play_freq_ch1 (UINT freq, short bend)
+void play_freq_ch1 (UINT freq, int newNote )
 {
     NR13_REG = (unsigned char) freq;
-    if (bend)
-        NR14_REG = 0x00 | (freq >> 8);
-    else
+    if (newNote == 1) {
         NR14_REG = 0x80 | (freq >> 8);
+    } else { 
+        NR14_REG = 0x00 | (freq >> 8);
+    }
 }
 
-void play_freq_ch2 (UINT freq, short bend)
+void play_freq_ch2 (UINT freq, int newNote )
 {
     NR23_REG = (unsigned char) freq;
-    if (bend)
-        NR24_REG = 0x00 | (freq >> 8);
-    else
+
+    if (newNote==1) {
         NR24_REG = 0x80 | (freq >> 8);
+    } else { 
+        NR24_REG = 0x00 | (freq >> 8);
+    }
 }

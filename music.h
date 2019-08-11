@@ -14,6 +14,7 @@ const char* note_names[] = {
   " C", "#C", " D", "#D", " E", " F", "#F", " G", "#G", " A", "#A", " B"
 };
 
+
 extern SCALE major[];
 extern SCALE minor[];
 extern SCALE blues[];

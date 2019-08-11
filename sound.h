@@ -12,6 +12,7 @@
 #define RESET 0x80
 #define HIGH 0xFF
 #define LOW 0x00
+#define MED 0xA4
 
 #define SOUND_CHIP NR52_REG
 #define SOUND_OUTPUT NR51_REG
@@ -37,11 +38,12 @@
 
 #define SET_PULSE_WIDTH(CH, DUTY) (CH## _DUTY_CYCLE) = (PULSE_WIDTH_## DUTY);
 
+
 UINT getFrequencies(int note, int bend);
 
 extern const UINT note_frequencies[];
 
-void play_freq_ch1 (UINT f, short bend);
-void play_freq_ch2 (UINT f, short bend);
+void play_freq_ch1 (UINT f, int newNote);
+void play_freq_ch2 (UINT f, int newNote);
 
 #endif
