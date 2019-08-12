@@ -13,7 +13,7 @@ void main() {
 
     UBYTE keys;
     UBYTE pos, old_pos = 0;
-    int note, old_note = 0;
+    int note = 0;
     int octave_min = 0;
     int octave_max = 3;
     int relative_octave = 0;
@@ -22,16 +22,16 @@ void main() {
     UBYTE mode = 0;
     UBYTE root = C;
     SCALE scale[8];
-    int start_pressed = 0;
-    int select_pressed = 0;
 
 
     int bend = 0;
     int bendcount = 0;
-    int bendwait = 6;
+    int bendwait = 12;
     int dontbend = 0;
 
     // For note bending
+    int initialNote = 0;
+    int targetMult = 0;
     int targetNote = -1;
     int isPortamento = 0;
 
@@ -63,7 +63,7 @@ void main() {
     small_font = font_load (font_spect);
     font_set (big_font);
  
-    printf (" MuddyGB-DSD v%s\n", MUDDYGBDSD_VERSION);
+    printf (" MuddyGB-RVL v%s\n", MUDDYGBRVL_VERSION);
 
     INIT_SOUND;
     MASTER_VOLUME = OFF;
@@ -79,6 +79,8 @@ void main() {
     for (;;) {
         keys = joypad ();
         pos = scale_position (keys);
+        jp = just_pressed(keys);
+        //if (jp != 0) printf("%d\n", jp);
 
         if (pos) {
             note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
@@ -109,23 +111,38 @@ void main() {
 
             if (PRESSED (A)){
                 isPortamento = 1;
-                //if (bendcount == bendwait){
-                if (targetNote > 0) {
-                    if (bend < targetNote*12){
-                        bend++;
-                        play_note(note, waveform, bend, 0);
-                        printf("%d\n", targetNote);
+                targetMult = targetNote *12;
+                if (bendcount == bendwait){
+                    if (targetNote > 0) {
+                        if (bend <= targetMult){
+                            if (bend == targetMult) {
+                                printf("reached target note: %d\n", targetNote);
+                                bend = 0;
+                                targetNote = 0;
+                                initialNote = note;
+                                play_note(note, waveform, bend, 0);
+                            } else {
+                                bend++;
+                                play_note(initialNote, waveform, bend, 0);
+                            }
+                        }
+                    } else if (targetNote < 0) {
+                        if (bend >= targetMult){
+                            if (bend == targetMult) {
+                                printf("reached target note: %d\n", targetNote);
+                                bend = 0;
+                                initialNote = note;
+                                targetNote = 0;
+                                play_note(note, waveform, bend, 0);
+                            } else {
+                                bend--;
+                                play_note(initialNote, waveform, bend, 0);
+                            }
+                        }
                     }
-                } else if (targetNote < 0) {
-                    if (bend > targetNote*12){
-                        bend--;
-                        play_note(note, waveform, bend, 0);
-                        printf("%d\n", targetNote);
-                    }
+                    bendcount = 0;
                 }
-
-               // }
-                //bendcount++;
+                bendcount++;
 
             } else {
                 isPortamento = 0;
@@ -194,31 +211,22 @@ void main() {
 
             continue;
 
-        } else if (PRESSED (START) && !start_pressed){
+        } else if (jp & J_START ){
             if (relative_octave < octave_max){
                 relative_octave++;
             }
-            start_pressed = 1;
             //printf ("\n;; rel octave +%d\n", relative_octave);
-        } else if (PRESSED (SELECT) && !select_pressed){
+        } else if (jp & J_SELECT ){
             if (octave_min < relative_octave){
                 relative_octave--;
             }
-            select_pressed = 1;
             //printf ("\n;; rel octave +%d\n", relative_octave);
-        } else {
-            if (!PRESSED(START))
-                start_pressed = 0;
-            if (!PRESSED(SELECT))
-                select_pressed = 0;
-        }
-
+        } 
         if ((pos != old_pos)) {
             if (pos) {
                 if (isPortamento){
                     
-                    //targetNote = old_note - note;
-                    targetNote = note - old_note;
+                    targetNote = note - initialNote;
 
                 } else {
                     /* Note will be played */
@@ -232,13 +240,15 @@ void main() {
 
                     play_note(note, waveform, bend, 1);
 
+                    initialNote = note;
+
                 }
-                old_note = note;
 
                 font_set(small_font);
 
                 if (note >= 0)
-                    printf(note_names[note % OCTAVE_LEN]);
+                    ;
+                    //printf(note_names[note % OCTAVE_LEN]);
                 else
                     printf(note_names[note + OCTAVE_LEN]);
 
@@ -255,7 +265,6 @@ void main() {
             }
         }
 
-        old_note = note;
         old_pos = pos;
 
         if (waveform == pulsemod){
@@ -297,7 +306,7 @@ void main() {
         } else {
             pulseinit = 0;
         }
-        oldPad = joypad();
+        oldPad = keys;
         // wait_vbl_done();
     }
 }
@@ -397,6 +406,23 @@ void update_waveform (UBYTE waveform) {
     }
 }
 
-UINT8 just_pressed () {
-    return oldPad && joypad();
+UINT8 just_pressed (UINT8 newPad) {
+    UINT8 tempPress = oldPad ^ newPad;
+
+    return tempPress & newPad;
+
+}
+
+int compute_new_bend (int bend, int targetNote) {
+    int counter = 0;
+
+    if (bend < 0)
+    {
+        while (bend < -12)
+        {
+            counter++;
+            bend += 12; 
+        }
+    }
+    return 0;
 }

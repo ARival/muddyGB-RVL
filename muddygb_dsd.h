@@ -6,7 +6,7 @@
 #ifndef BOUEUX_H
 #define BOUEUX_H
 
-#define MUDDYGBDSD_VERSION "0.1.1a"
+#define MUDDYGBRVL_VERSION "0.1a"
 
 #define UINT unsigned int
 #define UBYTE unsigned char
@@ -25,10 +25,11 @@ enum Waveforms
 
 UBYTE scale_position (UBYTE keys);
 UINT8 oldPad = 0;
+UINT8 jp = 0;
 
 void play_note (short note, UBYTE waveform, short bend, int newNote );
 void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode);
 void update_waveform (UBYTE waveform);
-UINT8 just_pressed ();
+UINT8 just_pressed (UINT8 newPad);
 
 #endif
