@@ -18,8 +18,8 @@ Usage is similar to muddyGB, but with some big changes planned.
 
 * The directional pad acts to play the notes of the chosen scale.
 * The START button raises and lowers the scale by an octave.
-* The A button enables portamento between notes *BUGGY*
-* The B button performs a fixed vibrato
+* The B button enables portamento between notes
+* The A button performs a fixed vibrato
 * The START button raise the pitch by an octave
 * The SELECT button lower the pitch by an octave
 * while SELECT + START pressed got the options mode

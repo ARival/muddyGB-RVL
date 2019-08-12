@@ -1,4 +1,4 @@
-/* boueux.h -- main program loop
+/* muddygb_dsd.h -- main program loop
  */
 
 #include <gb/gb.h>
@@ -20,7 +20,7 @@
 
 
 enum Waveforms
-{ square, pulse1, pulse2, waver, perfect_5ths, pulsemod, echo,
+{ square, pulse1, pulse2, waver, perfect_5ths, pulsemod, 
   NUM_WAVEFORMS };
 
 UBYTE scale_position (UBYTE keys);
@@ -31,5 +31,6 @@ void play_note (short note, UBYTE waveform, short bend, int newNote );
 void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode);
 void update_waveform (UBYTE waveform);
 UINT8 just_pressed (UINT8 newPad);
+
 
 #endif

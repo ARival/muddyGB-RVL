@@ -2,12 +2,16 @@
  */
 
 #include <gb/gb.h>
-#include <stdio.h>
 #include <gb/font.h>
+#include <gb/console.h>
+#include <stdio.h>
 #include <time.h>
 #include "muddygb_dsd.h"
 #include "sound.h"
 #include "music.h"
+#include "gfx/pianoroll.c"
+#include "gfx/pianolayout.c"
+#include "gfx/ui.h"
 
 void main() {
 
@@ -45,11 +49,6 @@ void main() {
        -1,-3,-7,-3,-1,1,3,7,3,1,0
     };
 
-    /* 
-    const int vibratoValues[] = {
-       -1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11
-    };
-    */
     const int vibratoValueLength = 11;
 
     int pulseinit = 0;
@@ -57,13 +56,18 @@ void main() {
     int pulsewait = 24;
     int pulsephase = 0;
 
-    font_t big_font, small_font;
+
+    font_t big_font; //, small_font;
     font_init ();
     big_font = font_load (font_ibm);
-    small_font = font_load (font_spect);
+    //small_font = font_load (font_spect);
     font_set (big_font);
  
-    printf (" MuddyGB-RVL v%s\n", MUDDYGBRVL_VERSION);
+    
+
+    gotoxy(HUDPositions[0], HUDPositions[1]);
+    printf ("MuddyGB-RVL v%s", MUDDYGBRVL_VERSION);
+
 
     INIT_SOUND;
     MASTER_VOLUME = OFF;
@@ -72,6 +76,8 @@ void main() {
 
     build_scale_mode (scale, root, mode);
 
+    set_bkg_data(0x61, 12, PianoRoll);
+    set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
     /* Stop note */
     CH1_VOL = OFF;
     CH2_VOL = OFF;
@@ -203,19 +209,22 @@ void main() {
 
                 }
 
-                font_set(small_font);
+                //font_set(small_font);
+                gotoxy(HUDPositions[6], HUDPositions[7]);
+                //printf(note_names[note + OCTAVE_LEN]);
 
+                 
                 if (note >= 0)
-                    ;
-                    //printf(note_names[note % OCTAVE_LEN]);
+                    printf(note_names[note % OCTAVE_LEN]);
                 else
                     printf(note_names[note + OCTAVE_LEN]);
+                
 
                 absolute_octave = note / OCTAVE_LEN + 3;
                 printf("%d", absolute_octave);
 
-                printf(" ");
-                font_set(big_font);
+                //printf(" ");
+                //font_set(big_font);
             } else {
                 /* Stop note */
                 CH1_VOL = OFF;
@@ -311,10 +320,6 @@ void play_note (short note, UBYTE waveform, short bend, int newNote ) {
             freq2 = getFrequencies(note, bend+2);
             play_freq_ch2 (freq2, newNote);
             break;
-        case echo:
-            play_freq_ch2 (freq, newNote);
-            break;
-
         default:
             play_freq_ch1 (freq, newNote);
             //CH2_VOL = OFF;
@@ -324,8 +329,9 @@ void play_note (short note, UBYTE waveform, short bend, int newNote ) {
 }
 
 #define BUILD(TYPE) \
-    printf ("\n;; mode %s ", note_names[tonic]); \
-    printf ("%s\n", #TYPE); \
+    gotoxy(HUDPositions[4], HUDPositions[5]); \
+    printf ("mode %s", note_names[tonic]); \
+    printf ("%s ", #TYPE); \
     build_scale (scale, tonic, TYPE); \
     break;
 
@@ -341,34 +347,37 @@ void update_waveform (UBYTE waveform) {
     CH1 = RESET;
     CH2 = RESET;
 
+    gotoxy(HUDPositions[2], HUDPositions[3]);
+
     switch (waveform) {
         case square:
-            puts ("\n;; waveform square");
+
+            printf ("waveform: square   ");
             SET_PULSE_WIDTH (CH1, 50);
             //SET_PULSE_WIDTH (CH2, 50);
             break;
         case pulse1:
-            puts ("\n;; waveform pulse 25");
+            printf ("waveform: pulse25  ");
             SET_PULSE_WIDTH (CH1, 25);
             //SET_PULSE_WIDTH (CH2, 50);
             break;
         case pulse2:
-            puts ("\n;; waveform pulse 12.5");
+            printf ("waveform: pulse12.5");
             SET_PULSE_WIDTH (CH1, 12_5);
             //SET_PULSE_WIDTH (CH2, 50);
             break;
         case waver:
-            puts ("\n;; waveform waver");
+            printf ("waveform: waver    ");
             SET_PULSE_WIDTH (CH1, 50);
             SET_PULSE_WIDTH (CH2, 50);
             break;
         case perfect_5ths:
-            puts ("\n;; waveform 5ths");
+            printf("waveform: 5ths      ");
             SET_PULSE_WIDTH (CH1, 50);
             SET_PULSE_WIDTH (CH2, 50);
             break;
         case pulsemod:
-            puts ("\n;; waveform pulsemod");
+            printf ("waveform: pulsemod ");
             SET_PULSE_WIDTH (CH1, 12_5);
             //SET_PULSE_WIDTH (CH2, 12_5);
             break;
@@ -381,7 +390,7 @@ UINT8 just_pressed (UINT8 newPad) {
     return tempPress & newPad;
 
 }
-
+/* 
 int compute_new_bend (int bend, int targetNote) {
     int counter = 0;
 
@@ -395,3 +404,4 @@ int compute_new_bend (int bend, int targetNote) {
     }
     return 0;
 }
+*/
