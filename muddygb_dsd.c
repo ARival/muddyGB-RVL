@@ -26,7 +26,7 @@ void main() {
 
     int bend = 0;
     int bendcount = 0;
-    int bendwait = 12;
+    int bendwait = 4;
     int dontbend = 0;
 
     // For note bending
@@ -39,7 +39,7 @@ void main() {
     int vibamt = 0;
     int vibIndex = 0;
     int vibCount = 0;
-    int vibWait = 24;
+    int vibWait = 30;
     //int dontbend = 0;
     const int vibratoValues[] = {
        -1,-3,-7,-3,-1,1,3,7,3,1,0
@@ -87,7 +87,7 @@ void main() {
 
             /* Lower by semitone */
             //if (PRESSED (B) && !PRESSED (A)) note -= 1;
-            if (PRESSED (B) ) {
+            if (PRESSED (A) ) {
                 vibOn = 1;
                 vibCount++;
                 if (vibCount >= vibWait) {
@@ -109,36 +109,23 @@ void main() {
                 play_note(note, waveform, vibamt, 0);
             }
 
-            if (PRESSED (A)){
+            if (PRESSED (B)){
                 isPortamento = 1;
                 targetMult = targetNote *12;
                 if (bendcount == bendwait){
-                    if (targetNote > 0) {
-                        if (bend <= targetMult){
-                            if (bend == targetMult) {
-                                printf("reached target note: %d\n", targetNote);
-                                bend = 0;
-                                targetNote = 0;
-                                initialNote = note;
-                                play_note(note, waveform, bend, 0);
-                            } else {
-                                bend++;
-                                play_note(initialNote, waveform, bend, 0);
-                            }
-                        }
-                    } else if (targetNote < 0) {
-                        if (bend >= targetMult){
-                            if (bend == targetMult) {
-                                printf("reached target note: %d\n", targetNote);
-                                bend = 0;
-                                initialNote = note;
-                                targetNote = 0;
-                                play_note(note, waveform, bend, 0);
-                            } else {
-                                bend--;
-                                play_note(initialNote, waveform, bend, 0);
-                            }
-                        }
+                    if (bend < targetMult){
+                        bend++;
+                        play_note(initialNote, waveform, bend, 0);
+                    } else if (bend > targetMult){
+                        bend--;
+                        play_note(initialNote, waveform, bend, 0);
+                    } else if (bend == targetMult) {
+                        //printf("reached target note: %d\n", targetNote);
+                        bend = 0;
+                        initialNote = note;
+                        targetNote = 0;
+                        play_note(note, waveform, bend, 0);
+
                     }
                     bendcount = 0;
                 }
@@ -148,31 +135,6 @@ void main() {
                 isPortamento = 0;
                 bend = 0;
             }
-            /* 
-            if (PRESSED (A)){
-                // bend up
-                if (!dontbend){
-                    bendcount++;
-                    if (bendcount == bendwait){
-                        bendcount = 0;
-                        if (bend < 24){
-                            bend++;
-                            play_note(note, waveform, bend, 0);
-                        }
-                    }
-                }
-            } else {
-                dontbend = 0;
-                if (bend != 0) {
-                    bendcount++;
-                    if (bendcount == bendwait) {
-                        bendcount = 0;
-                        bend--;
-                        play_note(note, waveform, bend, 0);
-                    }
-                }
-            }
-            */
         } else {
             bend = 0;
             bendcount = 0;
@@ -232,9 +194,6 @@ void main() {
                     /* Note will be played */
                     bend = 0;
                     bendcount = 0;
-                    if PRESSED (A) {
-                        dontbend = 1;
-                    }
                     pulseinit = 0;
                     targetNote = 0;
 
@@ -386,6 +345,16 @@ void update_waveform (UBYTE waveform) {
         case square:
             puts ("\n;; waveform square");
             SET_PULSE_WIDTH (CH1, 50);
+            //SET_PULSE_WIDTH (CH2, 50);
+            break;
+        case pulse1:
+            puts ("\n;; waveform pulse 25");
+            SET_PULSE_WIDTH (CH1, 25);
+            //SET_PULSE_WIDTH (CH2, 50);
+            break;
+        case pulse2:
+            puts ("\n;; waveform pulse 12.5");
+            SET_PULSE_WIDTH (CH1, 12_5);
             //SET_PULSE_WIDTH (CH2, 50);
             break;
         case waver:

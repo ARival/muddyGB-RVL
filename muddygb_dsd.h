@@ -20,7 +20,7 @@
 
 
 enum Waveforms
-{ square, waver, perfect_5ths, pulsemod, echo,
+{ square, pulse1, pulse2, waver, perfect_5ths, pulsemod, echo,
   NUM_WAVEFORMS };
 
 UBYTE scale_position (UBYTE keys);
