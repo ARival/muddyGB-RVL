@@ -15,7 +15,12 @@ const char* note_names[] = {
 
 
 extern SCALE major[];
+extern SCALE dorian[];
+extern SCALE phrygian[];
+extern SCALE lydian[];
+extern SCALE myxolydian[];
 extern SCALE minor[];
+extern SCALE locrian[];
 extern SCALE blues[];
 
 void build_scale (UBYTE * scale, UBYTE tonic, SCALE * scale_type);

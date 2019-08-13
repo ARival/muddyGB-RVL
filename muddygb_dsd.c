@@ -18,6 +18,8 @@ void main() {
     UBYTE keys;
     UBYTE pos, old_pos = 0;
     int note = 0;
+    int noteInt = 0;  // Used for the piano
+    int oldNoteMap[4] = {0,0,0,0};
     int octave_min = 0;
     int octave_max = 3;
     int relative_octave = 0;
@@ -86,9 +88,8 @@ void main() {
         keys = joypad ();
         pos = scale_position (keys);
         jp = just_pressed(keys);
-        //if (jp != 0) printf("%d\n", jp);
 
-        if (pos) {
+        if (pos) {  // Check for A and B keys here.
             note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
 
             /* Lower by semitone */
@@ -218,10 +219,18 @@ void main() {
                     printf(note_names[note % OCTAVE_LEN]);
                 else
                     printf(note_names[note + OCTAVE_LEN]);
+
                 
 
                 absolute_octave = note / OCTAVE_LEN + 3;
                 printf("%d", absolute_octave);
+
+                gotoxy(0, 16);
+                noteInt = note % OCTAVE_LEN;
+
+
+                set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
+                set_bkg_tiles(7 + PianoOffset[noteInt],16,2,2, PianoNotesDown[noteInt]);
 
                 //printf(" ");
                 //font_set(big_font);
@@ -230,6 +239,7 @@ void main() {
                 CH1_VOL = OFF;
                 CH2_VOL = OFF;
                 targetNote = 0;
+                set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
             }
         }
 
@@ -331,15 +341,20 @@ void play_note (short note, UBYTE waveform, short bend, int newNote ) {
 #define BUILD(TYPE) \
     gotoxy(HUDPositions[4], HUDPositions[5]); \
     printf ("mode %s", note_names[tonic]); \
-    printf ("%s ", #TYPE); \
+    printf ("%s       ", #TYPE); \
     build_scale (scale, tonic, TYPE); \
     break;
 
 void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode) {
     switch (mode) {
         case 0: BUILD (major);
-        case 1: BUILD (minor);
-        case 2: BUILD (blues);
+        case 1: BUILD (dorian);
+        case 2: BUILD (phrygian);
+        case 3: BUILD (lydian);
+        case 4: BUILD (myxolydian);
+        case 5: BUILD (minor);
+        case 6: BUILD (locrian);
+        case 7: BUILD (blues);
     }
 }
 

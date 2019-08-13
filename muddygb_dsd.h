@@ -6,13 +6,13 @@
 #ifndef BOUEUX_H
 #define BOUEUX_H
 
-#define MUDDYGBRVL_VERSION "0.1a"
+#define MUDDYGBRVL_VERSION "0.3a"
 
 #define UINT unsigned int
 #define UBYTE unsigned char
 #define SCALE UBYTE
 
-#define NUM_MODES 3
+#define NUM_MODES 8
 #define OCTAVE_LEN 12
 
 #define PRESSED(KEY) (keys & J_## KEY)

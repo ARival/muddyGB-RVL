@@ -14,14 +14,13 @@ There are currently no configuration options.
 Usage
 -----
 
-Usage is similar to muddyGB, but with some big changes planned.
+Usage is similar to muddyGB, but with a much different method of playing.
 
 * The directional pad acts to play the notes of the chosen scale.
-* The START button raises and lowers the scale by an octave.
 * The B button enables portamento between notes
 * The A button performs a fixed vibrato
-* The START button raise the pitch by an octave
-* The SELECT button lower the pitch by an octave
+* The START button raises the pitch by an octave
+* The SELECT button lowers the pitch by an octave
 * while SELECT + START pressed got the options mode
   * + RIGHT selects the current mode.
   * + UP or DOWN selects the scale tonic (base note).
@@ -49,9 +48,8 @@ For future versions
 
 minestones for v1.0:
 
-* add graphical options menu
-  * enter by pressing key combination
+* Change options behavior to edit options with only the select key.
+* Fix the Piano to go up and down octaves, and shift around
 
-* fix waveform selection
 * add echo mode to pulse wave
 * add selectable envelopes (volume, pitch and pulse width)
