@@ -1,4 +1,4 @@
-#define QUANT_NOTE_OFFSET -4
+#define QUANT_NOTE_OFFSET -3
 #define QUANT_DETAIL 12
 #define QAUNT_TABLE_LEN 864
 

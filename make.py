@@ -37,12 +37,12 @@ def createFreqTable(fn):
 
 
 
-print "hello MuddyGB-DSD"
+print "hello MuddyGB-RVL"
 
 createFreqTable("freqtable.c")
 
 subprocess.call(["make"])
 
-subprocess.call(["vba", "muddygb_dsd.gb"])
+subprocess.call(["vba", "muddygb_rvl.gb"])
 
 

@@ -19,17 +19,18 @@ Usage is similar to muddyGB, but with a much different method of playing.
 * The directional pad acts to play the notes of the chosen scale.
 * The B button enables portamento between notes
 * The A button performs a fixed vibrato
-* The START button raises the pitch by an octave
-* The SELECT button lowers the pitch by an octave
-* while SELECT + START pressed got the options mode
+* while holding START:
   * + RIGHT selects the current mode.
   * + UP or DOWN selects the scale tonic (base note).
   * + LEFT selects the waveform.
+* while holding SELECT:
+  * + UP or DOWN changes the octave within a range of 3
+  * + LEFT or RIGHT changes the relative mode, basically allowing for an offset of the current scale. You can use this to play along with specific songs more conveniently.
 
 Available modes
 ---------------
 
-major, minor, Blues
+All of the basic modes are represented. Currently, the blues scale is disabled, though it will be re-enabled in the near future.
 
 (see scales.c)
 
@@ -48,8 +49,7 @@ For future versions
 
 minestones for v1.0:
 
-* Change options behavior to edit options with only the select key.
 * Fix the Piano to go up and down octaves, and shift around
-
-* add echo mode to pulse wave
-* add selectable envelopes (volume, pitch and pulse width)
+* Add more custom scales (blues, harmonic minor, etc)
+* Add echo mode to pulse wave
+* Add selectable envelopes (volume, pitch and pulse width)

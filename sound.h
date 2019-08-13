@@ -1,7 +1,7 @@
 /* sound.h -- playing sound
  */
 
-#include "muddygb_dsd.h"
+#include "muddygb_rvl.h"
 #include <gb/gb.h>
 
 #ifndef SOUND_H
