@@ -89,200 +89,198 @@ void main() {
         pos = scale_position (keys);
         jp = just_pressed(keys);
 
-        if (pos) {  // Check for A and B keys here.
-            note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
-
-            /* Lower by semitone */
-            //if (PRESSED (B) && !PRESSED (A)) note -= 1;
-            if (PRESSED (A) ) {
-                vibOn = 1;
-                vibCount++;
-                if (vibCount >= vibWait) {
-                    vibCount = 0;
-                    vibamt = vibratoValues[vibIndex];
-                    vibIndex++;
-                    if (vibIndex >= vibratoValueLength) {
-                        vibIndex = 0;
-                    }
-                    play_note(note, waveform, vibamt, 0);
-                }
-
-            } else if (vibOn == 1){
-                // reset indexes
-                vibOn = 0;
-                vibCount = 0;
-                vibIndex = 0;
-                vibamt = 0;
-                play_note(note, waveform, vibamt, 0);
-            }
-
-            if (PRESSED (B)){
-                isPortamento = 1;
-                targetMult = targetNote *12;
-                if (bendcount == bendwait){
-                    if (bend < targetMult){
-                        bend++;
-                        play_note(initialNote, waveform, bend, 0);
-                    } else if (bend > targetMult){
-                        bend--;
-                        play_note(initialNote, waveform, bend, 0);
-                    } else if (bend == targetMult) {
-                        //printf("reached target note: %d\n", targetNote);
-                        bend = 0;
-                        initialNote = note;
-                        targetNote = 0;
-                        play_note(note, waveform, bend, 0);
-
-                    }
-                    bendcount = 0;
-                }
-                bendcount++;
-
-            } else {
-                isPortamento = 0;
-                bend = 0;
-            }
-        } else {
-            bend = 0;
-            bendcount = 0;
-        }
-
-        /* Change octave */
-
-        if (PRESSED (SELECT) && PRESSED(START)) {
-            /* Change mode */
-            if (PRESSED (RIGHT)) {
+        if (PRESSED( START )) {
+            if (jp & J_RIGHT) {
                 mode = (mode + 1) % NUM_MODES;
-                WAIT_KEY_UP (RIGHT);
                 build_scale_mode (scale, root, mode);
             }
             /* Change waveform */
-            if (PRESSED (LEFT)) {
-                WAIT_KEY_UP (LEFT);
+            if (jp & J_LEFT) {
                 waveform = (waveform + 1) % NUM_WAVEFORMS;
                 update_waveform (waveform);
             }
             /* Increment root note */
-            if (PRESSED (UP)) {
-                WAIT_KEY_UP (UP);
+            if (jp & J_UP) {
                 root = (root + 1) % OCTAVE_LEN;
                 build_scale_mode (scale, root, mode);
             }
             /* Decrement root note */
-            if (PRESSED (DOWN)) {
-                WAIT_KEY_UP (DOWN);
+            if (jp & J_DOWN) {
                 if (root == 0)
                 root = OCTAVE_LEN - 1;
                 else
                 root = (root - 1) % OCTAVE_LEN;
                 build_scale_mode (scale, root, mode);
             }
+        } else if (PRESSED( SELECT )) {
 
-            continue;
+            if (jp & J_UP ){
+                if (relative_octave < octave_max){
+                    relative_octave++;
+                }
+                //printf ("\n;; rel octave +%d\n", relative_octave);
+            } 
+            if (jp & J_DOWN ){
+                if (octave_min < relative_octave){
+                    relative_octave--;
+                }
+                //printf ("\n;; rel octave +%d\n", relative_octave);
+            } 
+        } else {
 
-        } else if (jp & J_START ){
-            if (relative_octave < octave_max){
-                relative_octave++;
-            }
-            //printf ("\n;; rel octave +%d\n", relative_octave);
-        } else if (jp & J_SELECT ){
-            if (octave_min < relative_octave){
-                relative_octave--;
-            }
-            //printf ("\n;; rel octave +%d\n", relative_octave);
-        } 
-        if ((pos != old_pos)) {
-            if (pos) {
-                if (isPortamento){
-                    
-                    targetNote = note - initialNote;
+            if (pos) {  // Check for A and B keys here.
+                note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
+
+                /* Lower by semitone */
+                //if (PRESSED (B) && !PRESSED (A)) note -= 1;
+                if (PRESSED (A) ) {
+                    vibOn = 1;
+                    vibCount++;
+                    if (vibCount >= vibWait) {
+                        vibCount = 0;
+                        vibamt = vibratoValues[vibIndex];
+                        vibIndex++;
+                        if (vibIndex >= vibratoValueLength) {
+                            vibIndex = 0;
+                        }
+                        play_note(note, waveform, vibamt, 0);
+                    }
+
+                } else if (vibOn == 1){
+                    // reset indexes
+                    vibOn = 0;
+                    vibCount = 0;
+                    vibIndex = 0;
+                    vibamt = 0;
+                    play_note(note, waveform, vibamt, 0);
+                }
+
+                if (PRESSED (B)){
+                    isPortamento = 1;
+                    targetMult = targetNote *12;
+                    if (bendcount == bendwait){
+                        if (bend < targetMult){
+                            bend++;
+                            play_note(initialNote, waveform, bend, 0);
+                        } else if (bend > targetMult){
+                            bend--;
+                            play_note(initialNote, waveform, bend, 0);
+                        } else if (bend == targetMult) {
+                            //printf("reached target note: %d\n", targetNote);
+                            bend = 0;
+                            initialNote = note;
+                            targetNote = 0;
+                            play_note(note, waveform, bend, 0);
+
+                        }
+                        bendcount = 0;
+                    }
+                    bendcount++;
 
                 } else {
-                    /* Note will be played */
+                    isPortamento = 0;
                     bend = 0;
-                    bendcount = 0;
-                    pulseinit = 0;
-                    targetNote = 0;
-
-                    play_note(note, waveform, bend, 1);
-
-                    initialNote = note;
-
                 }
-
-                //font_set(small_font);
-                gotoxy(HUDPositions[6], HUDPositions[7]);
-                //printf(note_names[note + OCTAVE_LEN]);
-
-                 
-                if (note >= 0)
-                    printf(note_names[note % OCTAVE_LEN]);
-                else
-                    printf(note_names[note + OCTAVE_LEN]);
-
-                
-
-                absolute_octave = note / OCTAVE_LEN + 3;
-                printf("%d", absolute_octave);
-
-                gotoxy(0, 16);
-                noteInt = note % OCTAVE_LEN;
-
-
-                set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
-                set_bkg_tiles(7 + PianoOffset[noteInt],16,2,2, PianoNotesDown[noteInt]);
-
-                //printf(" ");
-                //font_set(big_font);
             } else {
-                /* Stop note */
-                CH1_VOL = OFF;
-                CH2_VOL = OFF;
-                targetNote = 0;
-                set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
+                bend = 0;
+                bendcount = 0;
             }
-        }
 
-        old_pos = pos;
+            /* Change octave */
 
-        if (waveform == pulsemod){
-            //update pulsemod
-            // this is draft code for testing ... implement it more efficient
-            if (!pulseinit){
-                pulseinit = 1;
-                pulsecount = 0;
-                pulsephase = 0;
+            if ((pos != old_pos)) {
+                if (pos) {
+                    if (isPortamento){
+                        
+                        targetNote = note - initialNote;
+
+                    } else {
+                        /* Note will be played */
+                        bend = 0;
+                        bendcount = 0;
+                        pulseinit = 0;
+                        targetNote = 0;
+
+                        play_note(note, waveform, bend, 1);
+
+                        initialNote = note;
+
+                    }
+
+                    //font_set(small_font);
+                    gotoxy(HUDPositions[6], HUDPositions[7]);
+                    //printf(note_names[note + OCTAVE_LEN]);
+
+                    
+                    if (note >= 0)
+                        printf(note_names[note % OCTAVE_LEN]);
+                    else
+                        printf(note_names[note + OCTAVE_LEN]);
+
+                    
+
+                    absolute_octave = note / OCTAVE_LEN + 3;
+                    printf("%d", absolute_octave);
+
+                    gotoxy(0, 16);
+                    noteInt = note % OCTAVE_LEN;
+
+
+                    set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
+                    set_bkg_tiles(7 + PianoOffset[noteInt],16,2,2, PianoNotesDown[noteInt]);
+
+                    //printf(" ");
+                    //font_set(big_font);
+                } else {
+                    /* Stop note */
+                    CH1_VOL = OFF;
+                    CH2_VOL = OFF;
+                    targetNote = 0;
+                    set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
+                }
             }
-            pulsecount++;
-            if (pulsecount == pulsewait){
-                pulsecount = 0;
-                pulsephase++;
-                if (5 < pulsephase){
+
+            old_pos = pos;
+
+            if (waveform == pulsemod){
+                //update pulsemod
+                // this is draft code for testing ... implement it more efficient
+                if (!pulseinit){
+                    pulseinit = 1;
+                    pulsecount = 0;
                     pulsephase = 0;
                 }
-                switch (pulsephase) {
-                    case 0:
-                        SET_PULSE_WIDTH (CH1, 12_5);
-                        break;
-                    case 1:
-                        SET_PULSE_WIDTH (CH1, 25);
-                        break;
-                    case 2:
-                        SET_PULSE_WIDTH (CH1, 50);
-                        break;
-                    case 3:
-                        SET_PULSE_WIDTH (CH1, 75);
-                        break;
-                    case 4:
-                        SET_PULSE_WIDTH (CH1, 50);
-                        break;
-                    case 5:
-                        SET_PULSE_WIDTH (CH1, 25);
-                        break;
+                pulsecount++;
+                if (pulsecount == pulsewait){
+                    pulsecount = 0;
+                    pulsephase++;
+                    if (5 < pulsephase){
+                        pulsephase = 0;
+                    }
+                    switch (pulsephase) {
+                        case 0:
+                            SET_PULSE_WIDTH (CH1, 12_5);
+                            break;
+                        case 1:
+                            SET_PULSE_WIDTH (CH1, 25);
+                            break;
+                        case 2:
+                            SET_PULSE_WIDTH (CH1, 50);
+                            break;
+                        case 3:
+                            SET_PULSE_WIDTH (CH1, 75);
+                            break;
+                        case 4:
+                            SET_PULSE_WIDTH (CH1, 50);
+                            break;
+                        case 5:
+                            SET_PULSE_WIDTH (CH1, 25);
+                            break;
+                    }
                 }
+            } else {
+                pulseinit = 0;
             }
-        } else {
-            pulseinit = 0;
         }
         oldPad = keys;
         // wait_vbl_done();
