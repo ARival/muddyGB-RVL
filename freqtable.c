@@ -2,7 +2,7 @@
 #define QUANT_DETAIL 12
 #define QAUNT_TABLE_LEN 864
 
-const UINT quant_frequencies[] = {
+const unsigned int quant_frequencies[] = {
 857, 862, 867, 873, 879, 884, 890, 895, 901, 906, 912, 917, 
 923, 928, 934, 939, 944, 950, 955, 960, 965, 970, 976, 981, 
 986, 991, 996, 1001, 1006, 1011, 1016, 1021, 1026, 1031, 1036, 1041, 

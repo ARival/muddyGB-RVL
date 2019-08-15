@@ -32,14 +32,14 @@ void main() {
 
     int bend = 0;
     int bendcount = 0;
-    int bendwait = 4;
+    int bendwait = 2;
     int dontbend = 0;
 
     // For note bending
     int initialNote = 0;
     int targetMult = 0;
     int targetNote = -1;
-    int isPortamento = 0;
+    int portaOn = 0;
 
     int vibOn = 0;
     int vibamt = 0;
@@ -138,13 +138,16 @@ void main() {
                 root = scale[0];
             } 
         } else {
+            portaOn = PRESSED (B);
+            // vibOn = PRESSED (A);
+
 
             if (pos) {  // Check for A and B keys here.
                 note = scale[pos - 1] + relative_octave*OCTAVE_LEN;
 
                 /* Lower by semitone */
                 //if (PRESSED (B) && !PRESSED (A)) note -= 1;
-                if (PRESSED (A) ) {
+                if (PRESSED (A)) {
                     vibOn = 1;
                     vibCount++;
                     if (vibCount >= vibWait) {
@@ -157,7 +160,7 @@ void main() {
                         play_note(note, waveform, vibamt, 0);
                     }
 
-                } else if (vibOn == 1){
+                } else if (vibOn) {
                     // reset indexes
                     vibOn = 0;
                     vibCount = 0;
@@ -166,8 +169,16 @@ void main() {
                     play_note(note, waveform, vibamt, 0);
                 }
 
-                if (PRESSED (B)){
-                    isPortamento = 1;
+            } else {
+                bend = 0;
+                bendcount = 0;
+            }
+
+            if ( portaOn ){
+                if (old_pos == 0 && pos) {
+                    portaOn = 0;
+                } else {
+
                     targetMult = targetNote *12;
                     if (bendcount == bendwait){
                         if (bend < targetMult){
@@ -187,21 +198,16 @@ void main() {
                         bendcount = 0;
                     }
                     bendcount++;
-
-                } else {
-                    isPortamento = 0;
-                    bend = 0;
                 }
+
             } else {
                 bend = 0;
-                bendcount = 0;
             }
-
             /* Change octave */
 
-            if ((pos != old_pos)) {
+            if (pos != old_pos ) {
                 if (pos) {
-                    if (isPortamento){
+                    if (portaOn){
                         
                         targetNote = note - initialNote;
 
@@ -223,8 +229,15 @@ void main() {
                     //printf(note_names[note + OCTAVE_LEN]);
 
                     
-                    if (note >= 0)
-                        printf(note_names[note % OCTAVE_LEN]);
+                    noteInt = note;
+
+                    if (note >= 0) {
+                        while (noteInt >= OCTAVE_LEN)
+                        {
+                            noteInt -= OCTAVE_LEN;
+                        }
+                        printf(note_names[noteInt]);
+                    }
                     else
                         printf(note_names[note + OCTAVE_LEN]);
 
@@ -233,25 +246,31 @@ void main() {
                     absolute_octave = note / OCTAVE_LEN + 3;
                     printf("%d", absolute_octave);
 
+                    // noteInt = note % OCTAVE_LEN;
+                    
+
+
                     gotoxy(0, 16);
-                    noteInt = note % OCTAVE_LEN;
-
-
                     set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
                     set_bkg_tiles(7 + PianoOffset[noteInt],16,2,2, PianoNotesDown[noteInt]);
 
                     //printf(" ");
                     //font_set(big_font);
-                } else {
+                    old_pos = pos;
+                } else if (!portaOn) {
                     /* Stop note */
                     CH1_VOL = OFF;
                     CH2_VOL = OFF;
                     targetNote = 0;
                     set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
+                    old_pos = pos;
                 }
             }
 
-            old_pos = pos;
+            
+            //old_pos = pos;
+            //gotoxy(HUDPositions[6], HUDPositions[7] +2);
+            //printf("%d %d P:%d", old_pos, pos, portaOn);
 
             if (waveform == pulsemod){
                 //update pulsemod
