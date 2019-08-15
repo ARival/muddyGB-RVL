@@ -12,9 +12,9 @@
   Tile size            : 8 x 8
   Tiles                : 0 to 11
 
-  Palette colors       : None.
+  Palette colors       : Included.
   SGB Palette          : None.
-  CGB Palette          : None.
+  CGB Palette          : 4 Bits per entry.
 
   Convert to metatiles : No.
 
@@ -25,6 +25,80 @@
 
 /* Bank of tiles. */
 #define PianoRollBank 0
+
+/* Super Gameboy palette 0 */
+#define PianoRollSGBPal0c0 6076
+#define PianoRollSGBPal0c1 8935
+#define PianoRollSGBPal0c2 6596
+#define PianoRollSGBPal0c3 5344
+
+/* Super Gameboy palette 1 */
+#define PianoRollSGBPal1c0 6076
+#define PianoRollSGBPal1c1 8935
+#define PianoRollSGBPal1c2 6596
+#define PianoRollSGBPal1c3 5344
+
+/* Super Gameboy palette 2 */
+#define PianoRollSGBPal2c0 6076
+#define PianoRollSGBPal2c1 8935
+#define PianoRollSGBPal2c2 6596
+#define PianoRollSGBPal2c3 5344
+
+/* Super Gameboy palette 3 */
+#define PianoRollSGBPal3c0 6076
+#define PianoRollSGBPal3c1 8935
+#define PianoRollSGBPal3c2 6596
+#define PianoRollSGBPal3c3 5344
+
+/* Gameboy Color palette 0 */
+#define PianoRollCGBPal0c0 0
+#define PianoRollCGBPal0c1 10229
+#define PianoRollCGBPal0c2 31534
+#define PianoRollCGBPal0c3 32767
+
+/* Gameboy Color palette 1 */
+#define PianoRollCGBPal1c0 32767
+#define PianoRollCGBPal1c1 22197
+#define PianoRollCGBPal1c2 12684
+#define PianoRollCGBPal1c3 15391
+
+/* Gameboy Color palette 2 */
+#define PianoRollCGBPal2c0 6076
+#define PianoRollCGBPal2c1 8935
+#define PianoRollCGBPal2c2 6596
+#define PianoRollCGBPal2c3 5344
+
+/* Gameboy Color palette 3 */
+#define PianoRollCGBPal3c0 6076
+#define PianoRollCGBPal3c1 8935
+#define PianoRollCGBPal3c2 6596
+#define PianoRollCGBPal3c3 5344
+
+/* Gameboy Color palette 4 */
+#define PianoRollCGBPal4c0 6076
+#define PianoRollCGBPal4c1 8935
+#define PianoRollCGBPal4c2 6596
+#define PianoRollCGBPal4c3 5344
+
+/* Gameboy Color palette 5 */
+#define PianoRollCGBPal5c0 6076
+#define PianoRollCGBPal5c1 8935
+#define PianoRollCGBPal5c2 6596
+#define PianoRollCGBPal5c3 5344
+
+/* Gameboy Color palette 6 */
+#define PianoRollCGBPal6c0 6076
+#define PianoRollCGBPal6c1 8935
+#define PianoRollCGBPal6c2 6596
+#define PianoRollCGBPal6c3 5344
+
+/* Gameboy Color palette 7 */
+#define PianoRollCGBPal7c0 6076
+#define PianoRollCGBPal7c1 8935
+#define PianoRollCGBPal7c2 6596
+#define PianoRollCGBPal7c3 5344
+/* CGBpalette entries. */
+extern unsigned char PianoRollCGB[];
 /* Start of tile array. */
 extern unsigned char PianoRoll[];
 

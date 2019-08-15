@@ -4,16 +4,18 @@
 #include <gb/gb.h>
 #include <gb/font.h>
 #include <gb/console.h>
+#include <gb/drawing.h>
 #include <stdio.h>
 #include <time.h>
 #include "muddygb_rvl.h"
 #include "sound.h"
 #include "music.h"
 #include "gfx/pianoroll.c"
-#include "gfx/pianolayout.c"
+#include "gfx/pianolayoutcolor.c"
 #include "gfx/ui.h"
 
 void main() {
+    extern UBYTE _cpu;
 
     UBYTE keys;
     UBYTE pos, old_pos = 0;
@@ -35,18 +37,18 @@ void main() {
     int bendwait = 2;
     int dontbend = 0;
 
-    // For note bending
+    /* Portamento stuff */
     int initialNote = 0;
     int targetMult = 0;
     int targetNote = -1;
     int portaOn = 0;
 
+    /* Vibrato stuff */
     int vibOn = 0;
     int vibamt = 0;
     int vibIndex = 0;
     int vibCount = 0;
     int vibWait = 30;
-    //int dontbend = 0;
     const int vibratoValues[] = {
        -1,-3,-7,-3,-1,1,3,7,3,1,0
     };
@@ -59,17 +61,47 @@ void main() {
     int pulsephase = 0;
 
 
-    font_t big_font; //, small_font;
+    UWORD CGBPalettes [8*4] = {
+        PianoRollCGBPal0c0,PianoRollCGBPal0c1,PianoRollCGBPal0c2,PianoRollCGBPal0c3,
+        PianoRollCGBPal1c0,PianoRollCGBPal1c1,PianoRollCGBPal1c2,PianoRollCGBPal1c3,
+        PianoRollCGBPal2c0,PianoRollCGBPal2c1,PianoRollCGBPal2c2,PianoRollCGBPal2c3,
+        PianoRollCGBPal3c0,PianoRollCGBPal3c1,PianoRollCGBPal3c2,PianoRollCGBPal3c3,
+        PianoRollCGBPal4c0,PianoRollCGBPal4c1,PianoRollCGBPal4c2,PianoRollCGBPal4c3,
+        PianoRollCGBPal5c0,PianoRollCGBPal5c1,PianoRollCGBPal5c2,PianoRollCGBPal5c3,
+        PianoRollCGBPal6c0,PianoRollCGBPal6c1,PianoRollCGBPal6c2,PianoRollCGBPal6c3,
+        PianoRollCGBPal7c0,PianoRollCGBPal7c1,PianoRollCGBPal7c2,PianoRollCGBPal7c3
+    };
+
+    font_t big_font, small_font;
     font_init ();
+    /* if Gameboy Color, change colors of font */
+    if (_cpu == 0x11)
+        color(DKGREY,WHITE, SOLID );
     big_font = font_load (font_ibm);
-    //small_font = font_load (font_spect);
+    /* if Gameboy Color, change colors of font */
+    if (_cpu == 0x11)
+        color(LTGREY,WHITE, SOLID );
+    small_font = font_load (font_spect);
     font_set (big_font);
+    
+
+
+
  
+    set_bkg_palette(0,1,&CGBPalettes[0]);
+    set_bkg_palette(1,1,&CGBPalettes[4]);
+    set_bkg_palette(2,1,&CGBPalettes[8]);
+    set_bkg_palette(3,1,&CGBPalettes[12]);
+    set_bkg_palette(4,1,&CGBPalettes[16]);
+    set_bkg_palette(5,1,&CGBPalettes[20]);
+    set_bkg_palette(6,1,&CGBPalettes[24]);
+    set_bkg_palette(7,1,&CGBPalettes[28]);
     
 
     gotoxy(HUDPositions[0], HUDPositions[1]);
     printf ("MuddyGB-RVL v%s", MUDDYGBRVL_VERSION);
 
+    font_set(small_font);
 
     INIT_SOUND;
     MASTER_VOLUME = OFF;
@@ -78,8 +110,28 @@ void main() {
 
     build_scale_mode (scale, root, mode);
 
-    set_bkg_data(0x61, 12, PianoRoll);
-    set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
+    set_bkg_data(0xC1, 12, PianoRoll);
+    //set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
+
+
+
+
+  /* Select VRAM bank 1 (which stores the attributes) */
+  VBK_REG = 1;
+
+  /* Set attributes */
+    set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayoutBLK0PLN1);
+
+
+  /* Select VRAM bank 0 (which stores the tiles) */
+  VBK_REG = 0;
+
+  /* Set data */
+    set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayoutBLK0PLN0);
+
+    SHOW_BKG;
+
+
     /* Stop note */
     CH1_VOL = OFF;
     CH2_VOL = OFF;
@@ -99,6 +151,22 @@ void main() {
                 waveform = (waveform + 1) % NUM_WAVEFORMS;
                 update_waveform (waveform);
             }
+            /* Increment octave */
+            if (jp & J_UP ){
+                if (relative_octave < octave_max){
+                    relative_octave++;
+                }
+                //printf ("\n;; rel octave +%d\n", relative_octave);
+            } 
+            /* Decrement octave */
+            if (jp & J_DOWN ){
+                if (octave_min < relative_octave){
+                    relative_octave--;
+                }
+                //printf ("\n;; rel octave +%d\n", relative_octave);
+            } 
+        } else if (PRESSED( SELECT )) {
+
             /* Increment root note */
             if (jp & J_UP) {
                 root = (root + 1) % OCTAVE_LEN;
@@ -112,26 +180,14 @@ void main() {
                 root = (root - 1) % OCTAVE_LEN;
                 build_scale_mode (scale, root, mode);
             }
-        } else if (PRESSED( SELECT )) {
-
-            if (jp & J_UP ){
-                if (relative_octave < octave_max){
-                    relative_octave++;
-                }
-                //printf ("\n;; rel octave +%d\n", relative_octave);
-            } 
-            if (jp & J_DOWN ){
-                if (octave_min < relative_octave){
-                    relative_octave--;
-                }
-                //printf ("\n;; rel octave +%d\n", relative_octave);
-            } 
+            /* move parallel mode left */
             if (jp & J_LEFT ){
                 mode = (mode-1 + NUM_MODES) % NUM_MODES;
 
                 build_scale_mode (scale, (scale[6]+12) % 12, mode);
                 root = scale[0];
             } 
+            /* move parallel mode right */
             if (jp & J_RIGHT ){
                 mode = (mode + 1) % NUM_MODES;
                 build_scale_mode (scale, scale[1] % 12 , mode);
@@ -251,7 +307,7 @@ void main() {
 
 
                     gotoxy(0, 16);
-                    set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
+                    set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayoutBLK0PLN0);
                     set_bkg_tiles(7 + PianoOffset[noteInt],16,2,2, PianoNotesDown[noteInt]);
 
                     //printf(" ");
@@ -262,7 +318,7 @@ void main() {
                     CH1_VOL = OFF;
                     CH2_VOL = OFF;
                     targetNote = 0;
-                    set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayout);
+                    set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayoutBLK0PLN0);
                     old_pos = pos;
                 }
             }
