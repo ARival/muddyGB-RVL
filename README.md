@@ -20,11 +20,12 @@ Usage is similar to muddyGB, but with a much different method of playing.
 * The B button enables portamento between notes
 * The A button performs a fixed vibrato
 * while holding START:
-  * + RIGHT selects the current mode.
-  * + UP or DOWN selects the scale tonic (base note).
-  * + LEFT selects the waveform.
-* while holding SELECT:
   * + UP or DOWN changes the octave within a range of 3
+  * + RIGHT cycles sequentially through modes.
+  * + LEFT selects the waveform.
+  * + A enables echo.
+* while holding SELECT:
+  * + UP or DOWN selects the scale tonic (base note).
   * + LEFT or RIGHT changes the relative mode, basically allowing for an offset of the current scale. You can use this to play along with specific songs more conveniently.
 
 Available modes
@@ -49,7 +50,8 @@ For future versions
 
 minestones for v1.0:
 
+* Add variable echo times
 * Fix the Piano to go up and down octaves, and shift around
 * Add more custom scales (blues, harmonic minor, etc)
-* Add echo mode to pulse wave
 * Add selectable envelopes (volume, pitch and pulse width)
+* Possible Scale Editor!

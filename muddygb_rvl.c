@@ -137,12 +137,6 @@ void main() {
     CH1_VOL = OFF;
     CH2_VOL = OFF;
 
-    /* 
-    disable_interrupts();
-    add_VBL(process_audio);
-    enable_interrupts();
-    set_interrupts(VBL_IFLAG);
-    */
   
     for (;;) {
         keys = joypad ();
@@ -171,6 +165,12 @@ void main() {
                 if (octave_min < relative_octave){
                     relative_octave--;
                 }
+                //printf ("\n;; rel octave +%d\n", relative_octave);
+            } 
+
+            if (jp & J_A ){
+                echo_on = echo_on ^ 0x01;
+                if (!echo_on) CH2_VOL = OFF;
                 //printf ("\n;; rel octave +%d\n", relative_octave);
             } 
         } else if (PRESSED( SELECT )) {
@@ -213,14 +213,12 @@ void main() {
                 //if (PRESSED (B) && !PRESSED (A)) note -= 1;
                 if (PRESSED (A)) {
                     vibOn = 1;
-                    //if (process_audio) {
-                        vibamt = vibratoValues[vibIndex];
-                        vibIndex++;
-                        if (vibIndex >= vibratoValueLength) {
-                            vibIndex = 0;
-                        }
-                        play_note(note, waveform, vibamt, 0);
-                    //}
+                    vibamt = vibratoValues[vibIndex];
+                    vibIndex++;
+                    if (vibIndex >= vibratoValueLength) {
+                        vibIndex = 0;
+                    }
+                    play_note(note, waveform, vibamt, 0);
 
                 } else if (vibOn) {
                     // reset indexes
@@ -396,7 +394,7 @@ UBYTE scale_position (UBYTE keys) {
 
 void play_note (short note, UBYTE waveform, short bend, UINT8 newNote ) {
     UINT freq, freq2 = 0;
-    freq = getFrequencies(note, bend+process_audio);
+    freq = getFrequencies(note, bend);
     /* (+ 1) because B2 needs to be able to be represented, because using
     * the A button on C3 will give B2. */
     freqCH1 = (unsigned char) freq;
@@ -501,10 +499,12 @@ void process_echo () {
     echoShit[echoCounter+3] = bendCH1;
     echoCounter +=4;
     if (echoCounter == 96) echoCounter = 0;
-    NR21_REG = echoShit[echoCounter] ;
-    NR22_REG = echoShit[echoCounter+1] ;
-    NR23_REG = echoShit[echoCounter+2] ;
-    NR24_REG = echoShit[echoCounter+3] ;
+    if (echo_on) {
+        NR21_REG = echoShit[echoCounter] ;
+        NR22_REG = echoShit[echoCounter+1] ;
+        NR23_REG = echoShit[echoCounter+2] ;
+        NR24_REG = echoShit[echoCounter+3] ;
+    }
     //gotoxy(HUDPositions[6], HUDPositions[7]+2);
     //printf("regs = %x", echoShit[echoCounter + 2]);
 }
