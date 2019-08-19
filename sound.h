@@ -43,7 +43,7 @@ UINT getFrequencies(int note, int bend);
 
 extern const UINT note_frequencies[];
 
-void play_freq_ch1 (UINT f, int newNote);
-void play_freq_ch2 (UINT f, int newNote);
+void play_freq_ch1 (UINT f, UINT8 newNote);
+void play_freq_ch2 (UINT f, UINT8 newNote);
 
 #endif

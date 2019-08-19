@@ -26,11 +26,21 @@ enum Waveforms
 UBYTE scale_position (UBYTE keys);
 UINT8 oldPad = 0;
 UINT8 jp = 0;
+UINT8 process_audio = 0;
 
-void play_note (short note, UBYTE waveform, short bend, int newNote );
+void vblank_isr ();
+void play_note (short note, UBYTE waveform, short bend, UINT8 newNote );
 void build_scale_mode (UBYTE * scale, UBYTE tonic, UBYTE mode);
 void update_waveform (UBYTE waveform);
 UINT8 just_pressed (UINT8 newPad);
 
+/* echo shit */
+unsigned char echoShit[3*32] = { 0 } ;
+char echoCounter = 0;
+void process_echo();
+UINT8 freqCH1=1;
+UINT8 freqCH2=1;
+UINT8 bendCH1=1;
+UINT8 bendCH2=1;
 
 #endif
