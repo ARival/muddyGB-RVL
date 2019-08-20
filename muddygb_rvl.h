@@ -6,7 +6,7 @@
 #ifndef BOUEUX_H
 #define BOUEUX_H
 
-#define MUDDYGBRVL_VERSION "0.7a"
+#define MUDDYGBRVL_VERSION "0.7b"
 
 #define UINT unsigned int
 #define UBYTE unsigned char
@@ -35,12 +35,13 @@ void update_waveform (UBYTE waveform);
 UINT8 just_pressed (UINT8 newPad);
 
 /* echo shit */
-unsigned char echoShit[3*32] = { 0 } ;
+unsigned char echoShit[5*28] = { 0 } ;
 char echoCounter = 0;
 void process_echo();
 UINT8 freqCH1=1;
 UINT8 freqCH2=1;
 UINT8 bendCH1=1;
 UINT8 bendCH2=1;
+UINT8 CH1NoteType = 0;
 
 #endif

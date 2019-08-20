@@ -137,11 +137,16 @@ void main() {
     CH1_VOL = OFF;
     CH2_VOL = OFF;
 
+    /* Print Echo status to Screen */
+    gotoxy(HUDPositions[6], HUDPositions[7]+2);
+    printf("Echo = %d", echo_on);
+
   
     for (;;) {
         keys = joypad ();
         pos = scale_position (keys);
         jp = just_pressed(keys);
+        CH1NoteType = 0;
 
         if (PRESSED( START )) {
             if (jp & J_RIGHT) {
@@ -171,7 +176,8 @@ void main() {
             if (jp & J_A ){
                 echo_on = echo_on ^ 0x01;
                 if (!echo_on) CH2_VOL = OFF;
-                //printf ("\n;; rel octave +%d\n", relative_octave);
+                gotoxy(HUDPositions[6], HUDPositions[7]+2);
+                printf("Echo = %d", echo_on);
             } 
         } else if (PRESSED( SELECT )) {
 
@@ -314,7 +320,7 @@ void main() {
                 } else if (!portaOn) {
                     /* Stop note */
                     CH1_VOL = OFF;
-                    CH2_VOL = OFF;
+                    CH1NoteType = 1;
                     targetNote = 0;
                     set_bkg_tiles(0, 16, PianoLayoutWidth, PianoLayoutHeight, PianoLayoutBLK0PLN0);
                     old_pos = pos;
@@ -395,14 +401,21 @@ UBYTE scale_position (UBYTE keys) {
 void play_note (short note, UBYTE waveform, short bend, UINT8 newNote ) {
     UINT freq, freq2 = 0;
     freq = getFrequencies(note, bend);
-    /* (+ 1) because B2 needs to be able to be represented, because using
-    * the A button on C3 will give B2. */
     freqCH1 = (unsigned char) freq;
-    //bendCH1 = newNote == 1 ? 0x80 | freq >> 8 : 0x00 | freq >> 8 ;
-    bendCH1 =  0x80 | freq >> 8;
-
-    if (newNote)
+    CH1NoteType = 2- newNote;
+    bendCH1 = newNote == 1 ? 0x80 | freq >> 8 : 0x00 | freq >> 8 ;
+        //bendCH1 =  0x80 | freq >> 8;
+    if (newNote == 1) 
+    {
         CH1_VOL = HIGH;
+    }
+    else
+    {
+        //bendCH1 &=  0x00 ;
+    }
+
+
+    //if (newNote)
 
     switch (waveform) {
         case perfect_5ths:
@@ -494,19 +507,24 @@ UINT8 just_pressed (UINT8 newPad) {
 
 void process_echo () {
     echoShit[echoCounter] = NR11_REG;
-    echoShit[echoCounter+1] = NR12_REG & 0x8F; 
+    echoShit[echoCounter+1] = NR12_REG & 0x48; 
     echoShit[echoCounter+2] = freqCH1;
     echoShit[echoCounter+3] = bendCH1;
-    echoCounter +=4;
-    if (echoCounter == 96) echoCounter = 0;
+    echoShit[echoCounter+4] = CH1NoteType;
+    echoCounter +=5;
+    if (echoCounter == 140) echoCounter = 0;
     if (echo_on) {
         NR21_REG = echoShit[echoCounter] ;
-        NR22_REG = echoShit[echoCounter+1] ;
-        NR23_REG = echoShit[echoCounter+2] ;
-        NR24_REG = echoShit[echoCounter+3] ;
+        if (echoShit[echoCounter+4] == 1)
+        {
+            NR22_REG = echoShit[echoCounter+1] ;
+            NR23_REG = echoShit[echoCounter+2] ;
+            NR24_REG = echoShit[echoCounter+3] ;
+        } else if (echoShit[echoCounter+4] == 2) {
+            NR23_REG = echoShit[echoCounter+2] ;
+            NR24_REG = echoShit[echoCounter+3] ;
+        }
     }
-    //gotoxy(HUDPositions[6], HUDPositions[7]+2);
-    //printf("regs = %x", echoShit[echoCounter + 2]);
 }
 /* 
 int compute_new_bend (int bend, int targetNote) {
